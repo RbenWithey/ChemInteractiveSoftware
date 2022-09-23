@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b727fae0bcff5b4a8e6bc94b6e32fda, type: 3}
-  m_Name: Hydrogen
+  m_Name: Helium
   m_EditorClassIdentifier: 
-  Neutrons: 0
-  Protons: 1
+  Neutrons: 2
+  Protons: 2
   shells: 1
-  electronsS1: 1
+  electronsS1: 2
   electronsS2: 0
   electronsS3: 0
   electronsS4: 0

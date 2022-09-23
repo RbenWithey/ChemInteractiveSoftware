@@ -3,7 +3,9 @@ guid: 6cd88a67426c62842b18f4bae64459c7
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - neutronstospawn: {fileID: 4615728767301957777, guid: c065ae29f0a7171448dbb3e4174ea544, type: 3}
+  - protonstospawn: {fileID: 4615728767301957777, guid: fe3842672cb69844f96c87e5cacd2674, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

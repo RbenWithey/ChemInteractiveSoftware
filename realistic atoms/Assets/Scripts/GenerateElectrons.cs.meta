@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b31052e7f27c6f945ba570246ed923b2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - electronstospawn: {fileID: 4615728767301957777, guid: 35bc1f744b201a3428533f0bf6fc3760, type: 3}
+  - ringstospawn: {fileID: 3351799325414968384, guid: d16374ad5af43b54c8efc692353d9be3, type: 3}
+  - ringMat: {fileID: 2100000, guid: fee361be123ddeb429e8e2255c22b6d6, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
