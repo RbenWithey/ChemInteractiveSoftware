@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b727fae0bcff5b4a8e6bc94b6e32fda, type: 3}
+  m_Name: Aluminium
+  m_EditorClassIdentifier: 
+  Neutrons: 14
+  Protons: 13
+  shells: 3
+  electronsS1: 2
+  electronsS2: 8
+  electronsS3: 3
+  electronsS4: 0
+  electronsS5: 0
+  electronsS6: 0
+  electronsS7: 0
+  description: 

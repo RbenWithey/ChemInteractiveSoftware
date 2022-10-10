@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ProtonRing : MonoBehaviour
@@ -38,7 +39,9 @@ public class ProtonRing : MonoBehaviour
         ringMR = ring.AddComponent<MeshRenderer>(); //this also happens for the mesh renderer
         ringMR.material = ringMat; //makes sure the mesh renderer is set the ring material that assigned in the inspector
 
-
+        ringMR.sortingOrder = -1;   
+        
+        //HOW TO RENDER AN OBJECT ON A CERTAIN LAYER BELOW THE PANEL LAYER.
         //build ring mesh
         //rewatch the video and comment
 

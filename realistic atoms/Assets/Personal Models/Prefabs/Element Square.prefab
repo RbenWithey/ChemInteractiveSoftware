@@ -710,9 +710,10 @@ GameObject:
   - component: {fileID: 1573977936566992135}
   - component: {fileID: 8369529899369811735}
   - component: {fileID: 2236601370600876930}
+  - component: {fileID: 3775594401436918552}
   m_Layer: 0
   m_Name: Element Square
-  m_TagString: Untagged
+  m_TagString: ElementTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -805,3 +806,16 @@ SortingGroup:
   m_SortingLayerID: 1855267635
   m_SortingLayer: -1
   m_SortingOrder: 0
+--- !u!114 &3775594401436918552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6597226585450839286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f999a303011b0964492fce6638954304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: {fileID: 0}

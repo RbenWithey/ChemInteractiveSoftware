@@ -26,9 +26,11 @@ public class GenerateElectrons : MonoBehaviour
     GameObject nucleusSphere;
 
 
+    //NOTE WE CHANGE RADIUS TO 0.01F FROM 0.0995F
+
     [Range(3, 360)]
     private int segments = 360; //how many segments the ring is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle. has to be set to 3 otherwise range wont be set and will default to zero leading to issues
-    public float innerRadius = 0.0995f;  //how far away from the centre of the planet the rings start (for higher principle energy levels, increase this). at 0.7 as a basic sphere in unity is half a unit radius, gives breathing room  
+    public float innerRadius = 0.01f;  //how far away from the centre of the planet the rings start (for higher principle energy levels, increase this). at 0.7 as a basic sphere in unity is half a unit radius, gives breathing room  
     private float thickness = 0.005f; //how wide the ring will be 
     public Material ringMat; //allows us to give the orbit a texture/material of whatever we want
     public float progress;
@@ -50,8 +52,8 @@ public class GenerateElectrons : MonoBehaviour
 
         int TotalElectrons = element.electronsS1 + element.electronsS2 + element.electronsS3 + element.electronsS4 + element.electronsS5 + element.electronsS6 + element.electronsS7;
         int shells = element.shells;
-        float centre = spawnerspinning.transform.position.x;
-        
+        Vector3 centre = spawnerspinning.transform.position;
+       // float electronRadius;
 
         //i is the index in this case, just counts up to the electrons number. so 3
         //we did -1 and that meant it was in the index (if we had 5 elements, 4 would be the index), doesnt make enough rings or electrons. why??
@@ -62,8 +64,50 @@ public class GenerateElectrons : MonoBehaviour
             //createring(i + 1); //this is more practical but with the way we are programming this i dont think it will help with trying to make the code more readable.
 
             if (i == 0)
-
+            {
                 createring(1);
+
+                int points = element.electronsS1;
+                double radius = innerRadius * i;
+
+                double slice = 2 * Math.PI / points;
+
+                //for (int j = 1; i < element.electronsS1; j++)
+                //{
+
+                    //double angle = slice * i;
+                    //int newX = (int)(centre.x + radius * Math.Cos(angle));
+                    //int newY = (int)(centre.y + radius * Math.Sin(angle));
+
+                    //Vector3 p = new Vector3 (newX, newY, 0);
+
+                    //GameObject electron = Instantiate(electronstospawn, p + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
+
+
+
+
+
+
+
+
+
+
+                    //    ////we have centre 
+                    //    ////we want to use y degrees
+                    //    //electronRadius = innerRadius * i;
+                    //    //tempangle = 360/element.electronsS1;
+
+                    //    //float x = (electronRadius * Math.Cos(tempangle) + centre);
+                    //    //float y = (electronRadius * Math.Cos(tempangle) + centre);
+
+                    //    //electronVector = new Vector3(x, y, 0);
+
+                    //    //GameObject electron = Instantiate(electronstospawn, electronVector + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
+                //}
+            }
+
+
+
 
             else if (i == 1)
 
@@ -95,98 +139,98 @@ public class GenerateElectrons : MonoBehaviour
         }
 
 
-        //this is gonna be a for loop nightmare do it in the create ring thing 
-        for (int i = 1; i < TotalElectrons; i++)
-        {
+//        //this is gonna be a for loop nightmare do it in the create ring thing 
+//        for (int i = 1; i < TotalElectrons; i++)
+//        {
 
-            //counts up the total electrons 
+//            //counts up the total electrons 
             
-            //find the radius of the ring 
-            Debug.Log("total electron loop entered");
+//            //find the radius of the ring 
+//            Debug.Log("total electron loop entered");
 
-            if (i  <= 2)
-            {
-                electronAngleAsFloat = 180;
-                float DistanceOfRing = (innerRadius * i);
+//            if (i  <= 2)
+//            {
+//                electronAngleAsFloat = 180;
+//                float DistanceOfRing = (innerRadius * i);
 
 
-                for (int j = 1; j <= element.electronsS1; j++) //just see how the electron  elements are stored 
-                {
+//                for (int j = 1; j <= element.electronsS1; j++) //just see how the electron  elements are stored 
+//                {
 
-                     //know how far the electron is //we need to do this with vectors 
+//                     //know how far the electron is //we need to do this with vectors 
                    
               
 
-                    if (j == 2)
+//                    if (j == 2)
 
-                    {
-                        DistanceOfRing = -DistanceOfRing; //so rather than changing the angle ,of the elctron itself (which only roatates the electron, not its position, you have to change the distance of ring and electron position vector.
-                    }
+//                    {
+//                        DistanceOfRing = -DistanceOfRing; //so rather than changing the angle ,of the elctron itself (which only roatates the electron, not its position, you have to change the distance of ring and electron position vector.
+//                    }
 
-                    //need to use the vector, but we work out said vector with an angle. think of it as a clock. 
+//                    //need to use the vector, but we work out said vector with an angle. think of it as a clock. 
 
-                    electronRotation = Quaternion.Euler(electronAngleAsFloat, 0.0f, 0.0f);
-                    electronVector = new Vector3(DistanceOfRing, 0.0f, 0.0f);
-
-
-                    GameObject electron = Instantiate(electronstospawn, electronVector + spawnerspinning.transform.position, electronRotation, spawnerspinning.transform);
-
-                }
-;
-
-                if (i > 2 && i <= 8)
-                {
-
-                }
+//                    electronRotation = Quaternion.Euler(electronAngleAsFloat, 0.0f, 0.0f);
+//                    electronVector = new Vector3(DistanceOfRing, 0.0f, 0.0f);
 
 
+//                    GameObject electron = Instantiate(electronstospawn, electronVector + spawnerspinning.transform.position, electronRotation, spawnerspinning.transform);
+
+//                }
+//;
+
+//                if (i > 2 && i <= 8)
+//                {
+
+//                }
 
 
 
 
-                //now we work out the angle using segments somehow.
-                //make custom class
-                //make a vector between two points which is direction
-                //find the position of the segments we are at 
 
 
-                //could we simply use the angle in the ring function and then the distance that we work out depending on the specific radius index of the ring. 
+//                //now we work out the angle using segments somehow.
+//                //make custom class
+//                //make a vector between two points which is direction
+//                //find the position of the segments we are at 
 
-                //research how to make a custom class, will probably be similar to the element clas thingwe made with andrei.
 
+//                //could we simply use the angle in the ring function and then the distance that we work out depending on the specific radius index of the ring. 
 
-
-                //maybe if we generater electron position with the ring
-
-                //we now have the circumference of the first ring
+//                //research how to make a custom class, will probably be similar to the element clas thingwe made with andrei.
 
 
 
+//                //maybe if we generater electron position with the ring
 
-                // electronPosition(i) = distance
-
-
-            }
+//                //we now have the circumference of the first ring
 
 
 
 
-            i++;
-
-        }
+//                // electronPosition(i) = distance
 
 
+//            }
 
 
-        //for (int i = 0; i < TotalElectrons; i++)
 
-        //{
 
-        //    electronVector = electronPosition[i];
+//            i++;
 
-        //    GameObject electron = Instantiate(electronstospawn, electronVector, Quaternion.identity, spawnerspinning.transform);
-        //    //call electron formula thing here for the electron vector position and the angle. will probably have to dowhat we did with element
-        //}
+//        }
+
+
+
+
+//        //for (int i = 0; i < TotalElectrons; i++)
+
+//        //{
+
+//        //    electronVector = electronPosition[i];
+
+//        //    GameObject electron = Instantiate(electronstospawn, electronVector, Quaternion.identity, spawnerspinning.transform);
+//        //    //call electron formula thing here for the electron vector position and the angle. will probably have to dowhat we did with element
+//        //}
     }
 
     public void createring(int ringIndex)
