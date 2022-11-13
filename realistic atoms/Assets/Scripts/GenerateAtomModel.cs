@@ -8,12 +8,16 @@ public class GenerateAtomModel : MonoBehaviour
     public GameObject spawnerfornucleus;
     public GameObject neutronstospawn;
     public GameObject protonstospawn;
-    
+
+    public GetSpecificElementInfo elementInfo;
 
     public void ButtonClick(Element element)
     {
-        Rigidbody rigidb;
+        elementInfo.OnStart(element);
 
+
+        Rigidbody rigidb;
+               
         //try spawning the protons and neutrons in different positions 
 
         //spawn in that many spheres in a realistic enough neutrons between protons as much as possible

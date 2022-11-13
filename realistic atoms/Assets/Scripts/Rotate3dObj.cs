@@ -11,7 +11,12 @@ public class Rotate3dObj : MonoBehaviour
     public float rotY;
     bool rotate;
 
- 
+    //private void Start()
+    //{
+    //    rb.AddTorque(250, 50, 0);
+    //}
+
+
     // Update is called once per frame
     private void Update()
     {
@@ -20,6 +25,7 @@ public class Rotate3dObj : MonoBehaviour
             rotate = true;
             rotX = Input.GetAxis("Mouse X") * strength;
             rotY = Input.GetAxis("Mouse Y") * strength;
+         
         }
         else
         {

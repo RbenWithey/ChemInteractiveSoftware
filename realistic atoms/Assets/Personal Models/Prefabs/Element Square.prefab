@@ -710,7 +710,7 @@ GameObject:
   - component: {fileID: 1573977936566992135}
   - component: {fileID: 8369529899369811735}
   - component: {fileID: 2236601370600876930}
-  - component: {fileID: 3775594401436918552}
+  - component: {fileID: 219676391255740327}
   m_Layer: 0
   m_Name: Element Square
   m_TagString: ElementTag
@@ -806,7 +806,7 @@ SortingGroup:
   m_SortingLayerID: 1855267635
   m_SortingLayer: -1
   m_SortingOrder: 0
---- !u!114 &3775594401436918552
+--- !u!114 &219676391255740327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b727fae0bcff5b4a8e6bc94b6e32fda, type: 3}
-  m_Name: Mecury
+  m_Name: Mercury
   m_EditorClassIdentifier: 
   Neutrons: 121
   Protons: 80

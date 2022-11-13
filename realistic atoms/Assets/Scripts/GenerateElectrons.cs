@@ -2,14 +2,8 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-
-
-public class ElectronPosition
-{
-    public float EDistance;
-    public Quaternion EAngle;
-}
 
 
 public class GenerateElectrons : MonoBehaviour
@@ -19,25 +13,25 @@ public class GenerateElectrons : MonoBehaviour
     //change the z to move the electrons slightly
     //REMEMBER INSPECTOR VARIABLES OVERRIDES THESE DEFAULTS SO MAKE SURE TO ADD ELECTRON POSITION IN INSPECTOR
     //public List<Vector3> electronPosition = new List<Vector3>() { new Vector3(815.1f, -4.5f, 1.8f), new Vector3(814.9f, -4.5f, 1.8f), new Vector3(815.01f, -4.6f, 1.8f), new Vector3(815, -4.6f, 1.8f) };
-
+    public GameObject Pivot;
     public GameObject spawnerspinning;
     public GameObject electronstospawn;
     public GameObject ringstospawn;
-    GameObject nucleusSphere;
+    // GameObject nucleusSphere;
 
 
     //NOTE WE CHANGE RADIUS TO 0.01F FROM 0.0995F
 
     [Range(3, 360)]
-    private int segments = 360; //how many segments the ring is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle. has to be set to 3 otherwise range wont be set and will default to zero leading to issues
-    public float innerRadius = 0.01f;  //how far away from the centre of the planet the rings start (for higher principle energy levels, increase this). at 0.7 as a basic sphere in unity is half a unit radius, gives breathing room  
+    private int segments = 365; //how many segments the ring is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle. has to be set to 3 otherwise range wont be set and will default to zero leading to issues
+    public float innerRadius = 0.0095f;  //how far away from the centre of the planet the rings start (for higher principle energy levels, increase this). at 0.7 as a basic sphere in unity is half a unit radius, gives breathing room  
     private float thickness = 0.005f; //how wide the ring will be 
     public Material ringMat; //allows us to give the orbit a texture/material of whatever we want
     public float progress;
     public float angle;
-    float electronAngleAsFloat;
-    Quaternion electronRotation;
-  
+    //float electronAngleAsFloat;
+    //Quaternion electronRotation;
+    //public Quaternion rotationofring = Quaternion.Euler(110, 0, 0);
 
     //cached references (so that we can easily access parts of the ring as they arent technically part of the nucleus)
 
@@ -46,6 +40,7 @@ public class GenerateElectrons : MonoBehaviour
     MeshFilter ringMF; //component that holds the mesh
     MeshRenderer ringMR; //not public, so if need to access from somewhere else, make them public or properties that can access them
 
+    Quaternion rotationofring = Quaternion.Euler(0, 90, 0);
 
     public void ButtonClick(Element element)
     {
@@ -53,6 +48,7 @@ public class GenerateElectrons : MonoBehaviour
         int TotalElectrons = element.electronsS1 + element.electronsS2 + element.electronsS3 + element.electronsS4 + element.electronsS5 + element.electronsS6 + element.electronsS7;
         int shells = element.shells;
         Vector3 centre = spawnerspinning.transform.position;
+        
        // float electronRadius;
 
         //i is the index in this case, just counts up to the electrons number. so 3
@@ -65,44 +61,37 @@ public class GenerateElectrons : MonoBehaviour
 
             if (i == 0)
             {
+                spawnerspinning.transform.rotation = Pivot.GetComponent<Transform>().rotation;
                 createring(1);
+                createElectrons(element.electronsS1, centre, innerRadius + (thickness/2));
 
-                int points = element.electronsS1;
-                double radius = innerRadius * i;
+                //int points = element.electronsS1;
+                //double radius = innerRadius * i;
 
-                double slice = 2 * Math.PI / points;
+                //double slice = 2 * Math.PI / points;
 
                 //for (int j = 1; i < element.electronsS1; j++)
                 //{
 
-                    //double angle = slice * i;
-                    //int newX = (int)(centre.x + radius * Math.Cos(angle));
-                    //int newY = (int)(centre.y + radius * Math.Sin(angle));
+                //double angle = slice * i;
+                //int newX = (int)(centre.x + radius * Math.Cos(angle));
+                //int newY = (int)(centre.y + radius * Math.Sin(angle));
 
-                    //Vector3 p = new Vector3 (newX, newY, 0);
+                //Vector3 p = new Vector3 (newX, newY, 0);
 
-                    //GameObject electron = Instantiate(electronstospawn, p + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
+                //GameObject electron = Instantiate(electronstospawn, p + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
 
+                //    ////we have centre 
+                //    ////we want to use y degrees
+                //    //electronRadius = innerRadius * i;
+                //    //tempangle = 360/element.electronsS1;
 
+                //    //float x = (electronRadius * Math.Cos(tempangle) + centre);
+                //    //float y = (electronRadius * Math.Cos(tempangle) + centre);
 
+                //    //electronVector = new Vector3(x, y, 0);
 
-
-
-
-
-
-
-                    //    ////we have centre 
-                    //    ////we want to use y degrees
-                    //    //electronRadius = innerRadius * i;
-                    //    //tempangle = 360/element.electronsS1;
-
-                    //    //float x = (electronRadius * Math.Cos(tempangle) + centre);
-                    //    //float y = (electronRadius * Math.Cos(tempangle) + centre);
-
-                    //    //electronVector = new Vector3(x, y, 0);
-
-                    //    //GameObject electron = Instantiate(electronstospawn, electronVector + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
+                //    //GameObject electron = Instantiate(electronstospawn, electronVector + spawnerspinning.transform.position, Quaternion.identity, spawnerspinning.transform);
                 //}
             }
 
@@ -110,33 +99,52 @@ public class GenerateElectrons : MonoBehaviour
 
 
             else if (i == 1)
-
+            {
                 createring(2);
+                createElectrons(element.electronsS2, centre, innerRadius * 2 + (thickness / 2));
+            }
+
+
 
             else if (i == 2)
-
+            {
                 createring(3);
+                createElectrons(element.electronsS3, centre, innerRadius * 3 + (thickness / 2));
+            }
+
+
 
             else if (i == 3)
-
+            {
                 createring(4);
+                createElectrons(element.electronsS4, centre, innerRadius * 4 + (thickness / 2));
+            }
 
             else if (i == 4)
-
+            {
                 createring(5);
+                createElectrons(element.electronsS5, centre, innerRadius * 5 + (thickness / 2));
+            }
 
             else if (i == 5)
-
+            {
                 createring(6);
+                createElectrons(element.electronsS6, centre, innerRadius * 6 + (thickness / 2));
+            }
 
             else if (i == 6)
-
+            {
                 createring(7);
+                createElectrons(element.electronsS7, centre, innerRadius * 7 + (thickness / 2));
+            }
 
 
-
+            
 
         }
+
+
+        
 
 
 //        //this is gonna be a for loop nightmare do it in the create ring thing 
@@ -233,6 +241,35 @@ public class GenerateElectrons : MonoBehaviour
 //        //}
     }
 
+    public void createElectrons(int num, Vector3 point, float radius)
+    {
+        for (int i = 0; i < num; i++)
+        {
+            var radians = 2 * Mathf.PI / num * i;
+
+            var vertical = Mathf.Sin(radians);
+            var horizontal = Mathf.Cos(radians);
+
+            //Debug.Log(horizontal + "horitzontal");
+            //Debug.Log(vertical + "verticle");
+
+            var spawnDir = new Vector3 (vertical, 0 , horizontal);
+
+            var spawnPos = point + spawnDir * radius;
+
+            
+
+            //instantiate 
+            GameObject electron = Instantiate(electronstospawn, spawnPos, Quaternion.identity, spawnerspinning.transform);
+
+            //try fiddle with this and the positions of where the electron are spawned
+            
+        }
+
+
+    }
+
+
     public void createring(int ringIndex)
 
     {
@@ -243,10 +280,12 @@ public class GenerateElectrons : MonoBehaviour
         ring.name = "Ring" + (ringIndex);
         ring.transform.parent = spawnerspinning.transform; //parents the ring to the nucleus/object
 
+         //TRY USING THIS TO DEBUG THE ROTATION PROBLEM NEVER MIND TRY TO GET THE ELCTRONS TO MATCH THIS ANGLE
+
         //resets the position of the rings no matter where the nucleus is in the enviroment to zero to prevent any issues
         ring.transform.localScale = Vector3.one; //this resets the scale
         ring.transform.localPosition = Vector3.zero; //resets the position so that it starts at the zero (or the centre of) where ever the planet is positioned. ring is in the same position as the object
-        ring.transform.localRotation = Quaternion.identity; //quaternion represents the rotation of the object. ensures rings are in the same rotation as the nucleus
+        ring.transform.localRotation = rotationofring; //quaternion represents the rotation of the object. ensures rings are in the same rotation as the nucleus
 
         ringMF = ring.AddComponent<MeshFilter>(); //take ring and add a component, returning the same component, allowing us to add the mesh filter and assign at the same time 
         ringMesh = ringMF.mesh; //rings mesh is equal to the meshfilters mesh

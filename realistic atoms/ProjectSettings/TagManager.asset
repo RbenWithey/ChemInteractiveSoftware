@@ -6,6 +6,11 @@ TagManager:
   tags:
   - Fade
   - ElementTag
+  - OtherObjectTag
+  - DaltonImages
+  - LavoisierImages
+  - PeriodicTableObject
+  - SphereTag
   layers:
   - Default
   - TransparentFX

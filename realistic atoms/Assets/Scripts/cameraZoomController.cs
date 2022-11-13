@@ -34,8 +34,79 @@ public class cameraZoomController : MonoBehaviour
     {
         cam = GameObject.Find("SecondaryCamera").GetComponent<Camera>();
         targetZoom = cam.orthographicSize;
+        targetZoom = targetZoom + 0.000001f;
 
     }
+
+    void ZoomOutReallyFar()
+    {
+        start = cam.transform.position;
+        des = new Vector3(815f, -4.5f, 0.691836f);
+        fadeIn = false;
+
+        if (fraction < 1)
+        {
+            fraction += Time.deltaTime * lerpSpeed;
+
+            cam.transform.position = Vector3.Lerp(start, des, fraction);
+        }
+
+        if (fraction >= 1)
+        {
+            fraction = 0;
+        }
+
+        if (fadeOut == true)
+        {
+
+
+            StartCoroutine(FadeOutCR());
+            FadeOutRunning = true;
+
+            if (FadeInRunning == true)
+            {
+                StopCoroutine(FadeInCR());
+                FadeInRunning = false;
+            }
+        }
+
+    }
+
+    //void ZoomInReallyFar()
+    //{
+    //    start = cam.transform.position;
+    //    des = new Vector3(815f, -4.5f, 0.691836f);
+    //    fadeIn = false;
+
+    //    if (fraction < 1)
+    //    {
+    //        fraction += Time.deltaTime * lerpSpeed;
+
+    //        cam.transform.position = Vector3.Lerp(start, des, fraction);
+    //    }
+
+    //    if (fraction >= 1)
+    //    {
+    //        fraction = 0;
+    //    }
+
+    //    if (fadeOut == true)
+    //    {
+
+
+    //        StartCoroutine(FadeInCR());
+    //        FadeInRunning = true;
+
+    //        if (FadeInRunning == true)
+    //        {
+    //            StopCoroutine(FadeOutCR());
+    //            FadeOutRunning = false;
+    //        }
+    //    }
+
+    //}
+
+
 
     void ZoomOutTooFar()
     {
@@ -57,8 +128,7 @@ public class cameraZoomController : MonoBehaviour
         if (fadeIn == true)
         {
            
-            
-                
+                       
 
             
 
@@ -179,13 +249,17 @@ public class cameraZoomController : MonoBehaviour
 
             ZoomInTooFar();
             StopCoroutine("ZoomInTooFar");
+            //zoom in and out really far
+            StopCoroutine("ZoomOutReallyFar");
+            //StopCoroutine("ZoomInReallyFar");
+
 
         }
 
         //FOR SOME REASON DEPENDENT ON TIME WHICH IS VERY CONFUSING 
         //NEED TO MAKE IT SO THAT IT CAN ALSO WORK IN REVERSE
 
-        if (size * 2 > 0.46f && fadeOut == false)
+        if (size * 2 > 0.46f && fadeOut == false || size * 2 < 0.69 && fadeOut == true)
         {
             //cam.transform.position = new Vector3(815.3f, -4.5f, 0.691836f); //slightly to the right, normal secondary camera just has 815
             //Debug.Log("Zoom out again");
@@ -195,7 +269,43 @@ public class cameraZoomController : MonoBehaviour
             ZoomOutTooFar();
 
             StopCoroutine("ZoomOutTooFar");
+            StopCoroutine("ZoomOutReallyFar");
+            //StopCoroutine("ZoomInReallyFar");
+
+            //zoom in and out really far
         }
+
+        if (size * 2 > 0.70f && fadeIn == false)
+        {
+            //cam.transform.position = new Vector3(815.3f, -4.5f, 0.691836f); //slightly to the right, normal secondary camera just has 815
+            //Debug.Log("Zoom out again");
+
+            fadeOut = true;
+
+            ZoomOutReallyFar();
+
+            StopCoroutine("ZoomOutTooFar");
+            StopCoroutine("ZoomInTooFar");
+            //zoom in really far 
+            //StopCoroutine("ZoomInReallyFar");
+        }
+
+        //if (size * 2 < 0.75f && fadeOut == false)
+        //{
+        //    //cam.transform.position = new Vector3(815.3f, -4.5f, 0.691836f); //slightly to the right, normal secondary camera just has 815
+        //    //Debug.Log("Zoom out again");
+
+        //    fadeIn = true;
+
+        //    ZoomInReallyFar();
+
+        //    StopCoroutine("ZoomOutTooFar");
+        //    StopCoroutine("ZoomInTooFar");
+        //    //zoom out really far
+        //    StopCoroutine("ZoomOutReallyFar");
+        //}
+
+
 
 
 
@@ -215,7 +325,7 @@ public class cameraZoomController : MonoBehaviour
             targetZoom = targetZoom - DownArrowData * zoomFactor;
         }
 
-        targetZoom = Mathf.Clamp(targetZoom, 0.13f, 0.50f);
+        targetZoom = Mathf.Clamp(targetZoom, 0.13f, 0.70f);
 
         cam.orthographicSize = Mathf.SmoothDamp(cam.orthographicSize, targetZoom, ref yVelocity, Time.deltaTime * zoomLerpSpeed);
 
