@@ -10,7 +10,13 @@ TagManager:
   - DaltonImages
   - LavoisierImages
   - PeriodicTableObject
-  - SphereTag
+  - UnReactedTag
+  - AtomNumber
+  - Atom
+  - Menu
+  - Atom1
+  - Atom2
+  - Spawner
   layers:
   - Default
   - TransparentFX
@@ -19,7 +25,7 @@ TagManager:
   - Water
   - UI
   - Fade
-  - 
+  - Outline
   - 
   - 
   - 

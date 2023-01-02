@@ -45,29 +45,24 @@ public class MainMenu : MonoBehaviour
       
     }
 
+    public void ToCollisionTheory()
+    {
+        SceneManager.LoadScene(2);
+    }
+
     public void ToPeriodicT()
 
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(1);
        
     }
 
-
-    public void PreviousSceneInOrder()
-
+    public void ChangeNumberOfAtomPresent()
     {
-
-      SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
-
+        //have multiple boxes for input that is then sent from here to unreacted spawner. 
     }
 
-    public void ToHydrogenInfo()
-
-    {
-
-        SceneManager.LoadScene("HydrogenInfo");
-
-    }
+    
 
 
     public void ToPreviousSceneInOrder()
@@ -79,14 +74,8 @@ public class MainMenu : MonoBehaviour
     }
 
 
-    public void ToHeliumInfo()
 
-    {
-
-        SceneManager.LoadScene("HeliumInfo");
-
-    }
-
+    
     public void SwitchToElementCam()
 
     {

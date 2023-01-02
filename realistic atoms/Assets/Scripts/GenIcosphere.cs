@@ -1,26 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GenIcosphere : MonoBehaviour
 {
 
+    //private void Awake() //awake is run before start very clever man :)
+    //{
+    //    //for (int i = 0; i < 10; i++)
+    //    //{
+    //        CreateSphere();
+    //    //}
+
+
+
+    
+    //}
    
-
-    private void Awake() //awake is run before start very clever man :)
-    {
-        //for (int i = 0; i < 10; i++)
-        //{
-            CreateSphere();
-        //}
-
-       
-
-        Sphere.transform.position = new Vector3(0, 0, 1);
-    }
-
     public PhysicMaterial BounceMat;
-    public Material SphereMaterial;
+    public Material SphereMaterial1;
+    public Material SphereMaterial2;
     public float SphereSize = 1f;
     GameObject Sphere;
     Mesh SphereMesh;
@@ -30,25 +30,38 @@ public class GenIcosphere : MonoBehaviour
     MeshFilter SphereMeshFilter;
     MeshCollider SphereMeshCollider;
 
-    public void CreateSphere()
+    public GameObject CreateSphere(Vector3 position, int AtomCheckNumber)
     {
-        CreateSphereGameObject();
+        //Debug.Log("Gen icosphere " + position);
+        CreateSphereGameObject(position, AtomCheckNumber);
         //do whatever else you need to do with the sphere mesh
         RecalculateMesh();
 
-        
+        return gameObject;
     }
 
-    void CreateSphereGameObject()
+    void CreateSphereGameObject(Vector3 position, int AtomCheckNumber)
     {
+
+
+
         Sphere = new GameObject();
         SphereMeshFilter = Sphere.AddComponent<MeshFilter>();
         SphereMesh = SphereMeshFilter.mesh;
         SphereMeshRenderer = Sphere.AddComponent<MeshRenderer>();
         //need to set the material in inspector 
-        SphereMeshRenderer.material = SphereMaterial;
+
+        if (AtomCheckNumber == 1)
+        {
+            SphereMeshRenderer.material = SphereMaterial1;
+        }
+        else
+        {
+            SphereMeshRenderer.material = SphereMaterial2;
+        }
+     
         Sphere.transform.localScale = new Vector3(SphereSize, SphereSize, SphereSize);
-        Icosphere.Create(Sphere, BounceMat);
+        Icosphere.Create(Sphere, BounceMat, position, AtomCheckNumber);
     }
 
     void RecalculateMesh()
@@ -57,4 +70,6 @@ public class GenIcosphere : MonoBehaviour
         SphereMesh.RecalculateTangents();
         SphereMesh.RecalculateNormals();
     }
+
+    
 }

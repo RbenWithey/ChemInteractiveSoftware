@@ -59,17 +59,31 @@ public static class Icosphere //public static class cant have instances of it. c
         return i;
     }
 
-    public static void Create(GameObject gameObject, PhysicMaterial BounceMat)
+
+   
+
+
+    public static void Create(GameObject gameObject, PhysicMaterial BounceMat, Vector3 position, int AtomCheckNumber)
     {
-       
+       //put names and tags here 
 
-        gameObject.name = "Sphere";
+        if (AtomCheckNumber == 1)
+        {
+            gameObject.name = "UnReactedAtom1";
 
-        gameObject.tag = "SphereTag";
+            gameObject.tag = "Atom1";
+        }
+        else
+        {
+            gameObject.name = "UnReactedAtom2";
+
+            gameObject.tag = "Atom2";
+        }
+
+        gameObject.transform.position = position;
 
         Rigidbody rb = gameObject.AddComponent<Rigidbody>();
         rb.useGravity = false;
-
 
         rb.constraints = RigidbodyConstraints.FreezePositionZ;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -88,7 +102,7 @@ public static class Icosphere //public static class cant have instances of it. c
         Vector3[] vertices = gameObject.GetComponent<MeshFilter>().mesh.vertices;
         List<Vector3> vertList = new List<Vector3>();
         Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
-        int index = 0;
+        //int index = 0;
 
         int recursionLevel = 3;
         float radius = 1f;
@@ -193,9 +207,14 @@ public static class Icosphere //public static class cant have instances of it. c
 
         
 
-        mc.material = BounceMat; 
+        mc.material = BounceMat;
+   
+
+        //gameObject.AddComponent<GiveObjKinetics>();
+        mesh.Optimize();
+
         
-        //mesh.Optimize();
+
     }
 
 
