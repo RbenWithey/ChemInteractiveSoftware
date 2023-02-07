@@ -69,3 +69,4 @@
 
 
 /////////////https://owlcation.com/stem/How-to-fade-out-a-GameObject-in-Unity
+/////this snippet of code could be useful to talk about with how i was unable to change the alpha value inside a material at run time, with it partially working, until the value negative and starting to invert the colours. 

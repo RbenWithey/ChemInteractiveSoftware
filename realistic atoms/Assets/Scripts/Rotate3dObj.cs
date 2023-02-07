@@ -38,7 +38,7 @@ public class Rotate3dObj : MonoBehaviour
         if (rotate)
         {
             rb.AddTorque(rotY, -rotX, 0); //vector 3 so stores 3 bits of data 
-        }   ///in this function, its applying the vertical mouse value to create rotational force around the x acis while the horizontal mouse value creates force around the y axis
+        }   ///in this function, its applying the vertical mouse value to create rotational force around the x axis while the horizontal mouse value creates force around the y axis
     }
 }
 

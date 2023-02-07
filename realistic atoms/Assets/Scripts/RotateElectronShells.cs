@@ -2,29 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spin2 : MonoBehaviour
-{
-
-    [Tooltip("Spin: Yes or No")]
+public class RotateElectronShells : MonoBehaviour //spin2 performs the exact same function as the spinnucleus script, however its values are slightly modified. both of the scripts running at the same time on the same spawner object creates the desired effect 
+{ //this effect being the 
     public bool spin;
-    [Tooltip("Spin the parent object instead of the object this script is attached to")]
     public bool spinParent;
     public float speed = 10f;
 
-    [HideInInspector]
+   
     public bool clockwise = true;
-    [HideInInspector]
     public float direction = 1f;
-    [HideInInspector]
-    public float directionChangeSpeed = 2f;
+    
 
     // Update is called once per frame
     void Update()
     {
-        if (direction < 1f)
-        {
-            direction += Time.deltaTime / (directionChangeSpeed / 2);
-        }
+
 
         if (spin)
         {

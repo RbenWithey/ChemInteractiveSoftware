@@ -13,41 +13,46 @@ public class GenerateElectrons : MonoBehaviour
     //change the z to move the electrons slightly
     //REMEMBER INSPECTOR VARIABLES OVERRIDES THESE DEFAULTS SO MAKE SURE TO ADD ELECTRON POSITION IN INSPECTOR
     //public List<Vector3> electronPosition = new List<Vector3>() { new Vector3(815.1f, -4.5f, 1.8f), new Vector3(814.9f, -4.5f, 1.8f), new Vector3(815.01f, -4.6f, 1.8f), new Vector3(815, -4.6f, 1.8f) };
-    public GameObject Pivot;
-    public GameObject spawnerspinning;
-    public GameObject electronstospawn;
-    public GameObject ringstospawn;
+
+
+    public GameObject Pivot; //sets up a game object to be used as a pivot on the spawner spinning. //these first two are set in the inspector. 
+    public GameObject spawnerspinning; //this sets up the spawner spinning object 
+    public GameObject electronstospawn; //this is going to hold how many electrons we will need 
+    public GameObject ringstospawn; //this is how many rings we are going to need 
+
+    //these are all gameobjects. 
+
     // GameObject nucleusSphere;
 
 
     //NOTE WE CHANGE RADIUS TO 0.01F FROM 0.0995F
 
-    [Range(3, 360)]
-    private int segments = 365; //how many segments the ring is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle. has to be set to 3 otherwise range wont be set and will default to zero leading to issues
-    public float innerRadius = 0.0095f;  //how far away from the centre of the planet the rings start (for higher principle energy levels, increase this). at 0.7 as a basic sphere in unity is half a unit radius, gives breathing room  
-    private float thickness = 0.005f; //how wide the ring will be 
-    public Material ringMat; //allows us to give the orbit a texture/material of whatever we want
-    public float progress;
+    [Range(3, 360)] //allows us to change the number of segments in the inspector
+    private int segments = 365; //how many segments the Shell is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle, has to have a minimum of 3 segments otherwise range wont be set and will default to zero leading to issues. you cant have a shape with only 2 lines allowed. but with 3, you make a triangle, which you could say is just a very low poly circle
+    public float innerRadius = 0.0095f;  //how far away from the centre of the nucleus the shell start (for higher principle energy levels, increase this).  
+    private float thickness = 0.005f; //how wide the Shell will be 
+    public Material ShellMat; //allows us to give the shell a texture/material of whatever we want
+    public float progress; //float that allows us to track how much of the ring we have created
     public float angle;
     //float electronAngleAsFloat;
     //Quaternion electronRotation;
-    //public Quaternion rotationofring = Quaternion.Euler(110, 0, 0);
+    //public Quaternion rotationofShell = Quaternion.Euler(110, 0, 0);
 
-    //cached references (so that we can easily access parts of the ring as they arent technically part of the nucleus)
+    //cached references (so that we can easily access parts of the Shell as they arent technically part of the nucleus)
 
-    GameObject ring;
-    Mesh ringMesh;
-    MeshFilter ringMF; //component that holds the mesh
-    MeshRenderer ringMR; //not public, so if need to access from somewhere else, make them public or properties that can access them
+    GameObject Shell;
+    Mesh ShellMesh;
+    MeshFilter ShellMF; //component that holds the mesh
+    MeshRenderer ShellMR; //not public, so if need to access from somewhere else, make them public or properties that can access them
 
-    Quaternion rotationofring = Quaternion.Euler(0, 90, 0);
+    Quaternion rotationofShell = Quaternion.Euler(0, 90, 0); //rotates the shell to 90 degrees on the y axis. 
 
-    public void ButtonClick(Element element)
+    public void ButtonClick(Element element) //passes in the scriptable object of the element that has been clicked on. 
     {
 
-        int TotalElectrons = element.electronsS1 + element.electronsS2 + element.electronsS3 + element.electronsS4 + element.electronsS5 + element.electronsS6 + element.electronsS7;
-        int shells = element.shells;
-        Vector3 centre = spawnerspinning.transform.position;
+        int TotalElectrons = element.electronsS1 + element.electronsS2 + element.electronsS3 + element.electronsS4 + element.electronsS5 + element.electronsS6 + element.electronsS7; //each shell summed together to get the total number of electrons
+        int shells = element.shells; //get the number of shells
+        Vector3 centre = spawnerspinning.transform.position; //the centre is the same place in the game world as the spawner. 
         
        // float electronRadius;
 
@@ -55,15 +60,15 @@ public class GenerateElectrons : MonoBehaviour
         //we did -1 and that meant it was in the index (if we had 5 elements, 4 would be the index), doesnt make enough rings or electrons. why??
         //thought i -1 would fix this, due to i counting to 4 (0,1,2,3) when theres only 3 electrons (1,2,3). but this still doesnt work
 
-        for (int i = 0; i < shells; i++)
+        for (int i = 0; i < shells; i++) //goes through each shell. 
         {
-            //createring(i + 1); //this is more practical but with the way we are programming this i dont think it will help with trying to make the code more readable.
+            //createShell(i + 1); //this is more practical but with the way we are programming this i dont think it will help with trying to make the code more readable.
 
             if (i == 0)
             {
-                spawnerspinning.transform.rotation = Pivot.GetComponent<Transform>().rotation;
-                createring(1);
-                createElectrons(element.electronsS1, centre, innerRadius + (thickness/2));
+                spawnerspinning.transform.rotation = Pivot.GetComponent<Transform>().rotation; //sets the pivot of the spawner spinning rotation
+                createShell(1); //creates first shell
+                createElectrons(element.electronsS1, centre, innerRadius + (thickness/2)); //creates electrons by passing number of electrons in that shell in, the centre point and the radius from the centre.
 
                 //int points = element.electronsS1;
                 //double radius = innerRadius * i;
@@ -98,9 +103,9 @@ public class GenerateElectrons : MonoBehaviour
 
 
 
-            else if (i == 1)
+            else if (i == 1) //for rest of the shells, goes through and does the same, generate a ring with a larger radius and spawning the electrons using a wider radius. 
             {
-                createring(2);
+                createShell(2);
                 createElectrons(element.electronsS2, centre, innerRadius * 2 + (thickness / 2));
             }
 
@@ -108,7 +113,7 @@ public class GenerateElectrons : MonoBehaviour
 
             else if (i == 2)
             {
-                createring(3);
+                createShell(3);
                 createElectrons(element.electronsS3, centre, innerRadius * 3 + (thickness / 2));
             }
 
@@ -116,25 +121,25 @@ public class GenerateElectrons : MonoBehaviour
 
             else if (i == 3)
             {
-                createring(4);
+                createShell(4);
                 createElectrons(element.electronsS4, centre, innerRadius * 4 + (thickness / 2));
             }
 
             else if (i == 4)
             {
-                createring(5);
+                createShell(5);
                 createElectrons(element.electronsS5, centre, innerRadius * 5 + (thickness / 2));
             }
 
             else if (i == 5)
             {
-                createring(6);
+                createShell(6);
                 createElectrons(element.electronsS6, centre, innerRadius * 6 + (thickness / 2));
             }
 
             else if (i == 6)
             {
-                createring(7);
+                createShell(7);
                 createElectrons(element.electronsS7, centre, innerRadius * 7 + (thickness / 2));
             }
 
@@ -147,13 +152,13 @@ public class GenerateElectrons : MonoBehaviour
         
 
 
-//        //this is gonna be a for loop nightmare do it in the create ring thing 
+//        //this is gonna be a for loop nightmare do it in the create Shell thing 
 //        for (int i = 1; i < TotalElectrons; i++)
 //        {
 
 //            //counts up the total electrons 
             
-//            //find the radius of the ring 
+//            //find the radius of the Shell 
 //            Debug.Log("total electron loop entered");
 
 //            if (i  <= 2)
@@ -172,7 +177,7 @@ public class GenerateElectrons : MonoBehaviour
 //                    if (j == 2)
 
 //                    {
-//                        DistanceOfRing = -DistanceOfRing; //so rather than changing the angle ,of the elctron itself (which only roatates the electron, not its position, you have to change the distance of ring and electron position vector.
+//                        DistanceOfRing = -DistanceOfRing; //so rather than changing the angle ,of the elctron itself (which only roatates the electron, not its position, you have to change the distance of Shell and electron position vector.
 //                    }
 
 //                    //need to use the vector, but we work out said vector with an angle. think of it as a clock. 
@@ -202,15 +207,15 @@ public class GenerateElectrons : MonoBehaviour
 //                //find the position of the segments we are at 
 
 
-//                //could we simply use the angle in the ring function and then the distance that we work out depending on the specific radius index of the ring. 
+//                //could we simply use the angle in the Shell function and then the distance that we work out depending on the specific radius index of the Shell. 
 
 //                //research how to make a custom class, will probably be similar to the element clas thingwe made with andrei.
 
 
 
-//                //maybe if we generater electron position with the ring
+//                //maybe if we generater electron position with the Shell
 
-//                //we now have the circumference of the first ring
+//                //we now have the circumference of the first Shell
 
 
 
@@ -243,19 +248,19 @@ public class GenerateElectrons : MonoBehaviour
 
     public void createElectrons(int num, Vector3 point, float radius)
     {
-        for (int i = 0; i < num; i++)
+        for (int i = 0; i < num; i++) //for each of the electrons
         {
-            var radians = 2 * Mathf.PI / num * i;
+            var radians = 2 * Mathf.PI / num * i; //work out the angle of where the electron should be 
 
-            var vertical = Mathf.Sin(radians);
+            var vertical = Mathf.Sin(radians); //work out the point on the circle in relation to the radians for vertical and horizontal var. 
             var horizontal = Mathf.Cos(radians);
 
             //Debug.Log(horizontal + "horitzontal");
             //Debug.Log(vertical + "verticle");
 
-            var spawnDir = new Vector3 (vertical, 0 , horizontal);
+            var spawnDir = new Vector3 (vertical, 0 , horizontal); //saves the spawn direction as a vector. 
 
-            var spawnPos = point + spawnDir * radius;
+            var spawnPos = point + spawnDir * radius; //spawn position is the spawner spinning centre + the direction then * by the radius. 
 
             
 
@@ -270,72 +275,65 @@ public class GenerateElectrons : MonoBehaviour
     }
 
 
-    public void createring(int ringIndex)
+    public void createShell(int ShellIndex)
 
     {
-        //Quaternion rot = transform.rotation * Quaternion.AngleAxis(90, Vector3.down); did this to try and rotat it, now try and change the ring directly through the rotat3dobj script -CORRECTION JUSGT CHANGE THE ROTATION OF THE ELECTRON SPAWNER IN THE INSPECTOR
-        ring = Instantiate(ringstospawn, spawnerspinning.transform.position, transform.rotation); //sets ring variable to a new game object. name in this case for the minute is just nucleus. so therefore "nucleus ring". this allows us to know which ring is associated with what object in the hierarchy
+        Shell = Instantiate(ringstospawn, spawnerspinning.transform.position, transform.rotation); //sets Shell variable to a new game object. this allows us to know which Shell is associated with what object in the hierarchy - in this case it is the spawner spinning object. 
 
 
-        ring.name = "Ring" + (ringIndex);
-        ring.transform.parent = spawnerspinning.transform; //parents the ring to the nucleus/object
+        Shell.name = "Shell" + (ShellIndex); //gives a clear name to the Shell - "Ring 1" for example
+        Shell.transform.parent = spawnerspinning.transform; //parents the Shell to the spawnerspinning object
 
-         //TRY USING THIS TO DEBUG THE ROTATION PROBLEM NEVER MIND TRY TO GET THE ELCTRONS TO MATCH THIS ANGLE
+        //resets the position of the rings no matter where the spawner is in the enviroment to zero to prevent any issues
+        Shell.transform.localScale = Vector3.one; //this resets the scale
+        Shell.transform.localPosition = Vector3.zero; //resets the position so that it starts at the zero (or the centre of) where ever the spawner is positioned. Shell is in the same position as the object
+        Shell.transform.localRotation = rotationofShell; //quaternion represents the rotation of the object. ensures rings are in the same rotation as the spawner - this keeps them all the same rotation
 
-        //resets the position of the rings no matter where the nucleus is in the enviroment to zero to prevent any issues
-        ring.transform.localScale = Vector3.one; //this resets the scale
-        ring.transform.localPosition = Vector3.zero; //resets the position so that it starts at the zero (or the centre of) where ever the planet is positioned. ring is in the same position as the object
-        ring.transform.localRotation = rotationofring; //quaternion represents the rotation of the object. ensures rings are in the same rotation as the nucleus
-
-        ringMF = ring.AddComponent<MeshFilter>(); //take ring and add a component, returning the same component, allowing us to add the mesh filter and assign at the same time 
-        ringMesh = ringMF.mesh; //rings mesh is equal to the meshfilters mesh
-        ringMR = ring.AddComponent<MeshRenderer>(); //this also happens for the mesh renderer
-        ringMR.material = ringMat; //makes sure the mesh renderer is set the ring material that assigned in the inspector
-
-
-        //build ring mesh
-        //rewatch the video and comment
+        ShellMF = Shell.AddComponent<MeshFilter>(); //take Shell and add a component, returning the same component, allowing us to add the mesh filter and assign at the same time 
+        ShellMesh = ShellMF.mesh; //rings mesh is equal to the meshfilters mesh
+        ShellMR = Shell.AddComponent<MeshRenderer>(); //this also happens for the mesh renderer
+        ShellMR.material = ShellMat; //makes sure the mesh renderer is set to the Shell material (assigned in the inspector)
 
 
         //create the arrays that store our vertices, triangles and uv co-ordinates
-        Vector3[] vertices = new Vector3[(segments + 1) * 2 * 2]; //vector 3 array (holds x,y,z points) equal to a new array which has a size of the number of segemnts we have +1 (as the very starting point of the ring will also have to double up as the end position as we dont want them to be the same uv co-ordinates). we multiply by two as we need a vertex at the inner radius and outer final thickness and multiple by two again as we need vertices at the top of the ring and at the bottom of the ring.
+        Vector3[] vertices = new Vector3[(segments + 1) * 2 * 2]; //vector 3 array (holds x,y,z points) equal to a new array which has a size of the number of segemnts we have +1 (as the very starting point of the Shell will also have to double up as the end position - we dont want them to be the same uv co-ordinates). we multiply by two as we need a vertex at the inner radius and outer final thickness and multiple by two again as we need vertices at the top of the Shell and at the bottom of the Shell.
 
         int[] triangles = new int[segments * 6 * 2]; //integer array holds triangles -basically every segment is a quad in our mesh. *2 again as top and bottom
 
         Vector2[] uv = new Vector2[(segments + 1) * 2 * 2]; //vector 2 array (U,V). same number of points as the verticies as cause every vertex needs a UV number assigned to it  
 
-        int halfway = (segments + 1) * 2; //helper variable, as we are doing the top side and the bottom side, we are doubling the number of vertices we need. verticy 0 is going to be the first vertex of the top side and then halfway through the huge away, the frist vertex of the bottom side. halfway integer is a handy ofset.   
+        int halfway = (segments + 1) * 2; //helper variable - as we are doing the top side and the bottom side, we are doubling the number of vertices we need. vertice 0 is going to be the first vertex of the top side and then halfway through the huge array, the frist vertex of the bottom side. halfway integer is a handy ofset.   
 
         for (int i = 0; i < segments + 1; i++) //loop through each segment and create quads. segments plus 1 as we are building out the final edge of vertices. 
         {
-            progress = (float)i / (float)segments; //determine how far we are along orbiting around the nucleus
+            progress = (float)i / (float)segments; //determine how far we are along orbiting around the spawner
             angle = Mathf.Deg2Rad * progress * 360; //find the angle we currently are on the circle. Deg2Rad (is a constant number) * progress * 360. progress * 360 is how much progress we have made in degrees converted to radions. 
             float x = Mathf.Sin(angle); //we can then use this to work out x and z positions of each vertex around the circle by using sin and cos of the circle
             float z = Mathf.Cos(angle);
 
 
-            //with all this info can now start making all of our vertices
+            //with all this info can now start making all of the vertices
 
-            // vertices[i * 2] = vertices[i * 2 + halfway]  gets us the top side and the bottom side of the vertices. both of these are equal to a new vector 3 (x and z we calculate, y is just 0 as always 0) multiply that by the inner radius and thickness.  
-            vertices[i * 2] = vertices[i * 2 + halfway] = new Vector3(x, 0f, z) * (innerRadius * ringIndex + thickness); //this gives us the outside vertices of the ring 
+            //gets us the top side and the bottom side of the vertices. both of these are equal to a new vector 3 (x and z we calculate, y is just 0 as always 0) multiply that by the inner radius and thickness.  
+            vertices[i * 2] = vertices[i * 2 + halfway] = new Vector3(x, 0f, z) * (innerRadius * ShellIndex + thickness); //this gives us the outside vertices of the Shell 
 
-            vertices[i * 2 + 1] = vertices[i * 2 + 1 + halfway] = new Vector3(x, 0f, z) * innerRadius * ringIndex; //on the inside we do the same idea. (plus one is so that we get the odd numbers inbetween). this is just the bottom side. 
+            vertices[i * 2 + 1] = vertices[i * 2 + 1 + halfway] = new Vector3(x, 0f, z) * innerRadius * ShellIndex; //on the inside we do the same idea. (plus one is so that we get the odd numbers inbetween). this is just the bottom side. 
 
-            uv[i * 2] = uv[i * 2 + halfway] = new Vector2(progress, 0f); //the points go along the width of the texture that we made, ones gonna be at top, one at bottom.moving horizontally as far as we have progressed, but -f as at the bottom of the texture. 
+            uv[i * 2] = uv[i * 2 + halfway] = new Vector2(progress, 0f); //the points go along the width of the texture that we made, ones gonna be at top, one at bottom.moving horizontally as far as we have progressed, but 0f as at the bottom of the texture. 
 
-            uv[i * 2 + 1] = uv[i * 2 + 1 + halfway] = new Vector2(progress, 1f); //for the inner edge of the ring, really just reflecting the vertices. now this is all the way to the top (1f)
+            uv[i * 2 + 1] = uv[i * 2 + 1 + halfway] = new Vector2(progress, 1f); //for the inner edge of the Shell, reflecting the vertices. now this is all the way to the top (1f)
 
 
             //determining the triangles that make up these quads
-            if (i != segments) //if we arent on the final loop, we go ahead and make these triangles. 
+            if (i != segments) //if not on the final loop, go ahead and make these triangles. 
 
-            //this is all to do with the quads being made
+            //this is all to do with the quads being formed
             {
                 triangles[i * 12] = i * 2; //12 as making 4 sets of triangles (2 quads for the top, 2 for the bottom). every loop is going to be an interation of 12 triangle vertices. i * 2 is how its pulling from the vertices array  
                 triangles[i * 12 + 1] = triangles[i * 12 + 4] = (i + 1) * 2;
                 triangles[i * 12 + 2] = triangles[i * 12 + 3] = i * 2 + 1;
                 triangles[i * 12 + 5] = (i + 1) * 2 + 1;
-                //what weve done here is getting the two vertices of the edge we created as well as next to to create these sets of 2 triangles. this does it for the top.
+                //this is getting the two vertices of the edge we created as well as next to to create these sets of 2 triangles. this does it for the top.
 
                 triangles[i * 12 + 6] = i * 2 + halfway;
                 triangles[i * 12 + 7] = triangles[i * 12 + 10] = i * 2 + 1;
@@ -343,22 +341,17 @@ public class GenerateElectrons : MonoBehaviour
                 triangles[i * 12 + 11] = (i + 1) * 2 + 1 + halfway;
                 //this does the same for the bottom
 
-                //notes on word document explaining why they are the order they are. to do with correctly rendering the shape.
+                //notes on coursework document explaining why they are the order they are. to do with correctly rendering the shape.
             }
 
         }
 
-        //this ring mesh vertices array is likely the one we are going to need to use. 
+        //this Shell mesh vertices array is the one going to need to use. 
         //these here use the information given previously to make the mesh
-        ringMesh.vertices = vertices;
-        ringMesh.triangles = triangles;
-        ringMesh.uv = uv;
-        ringMesh.RecalculateNormals(); //normal is perpendicular to the triangle it is trying to form. normals tell which way a vertex is facing. this is useful for lighting
-
-
-
-        //research how to work out an vecotor using a known vector, distance and angle.
-
+        ShellMesh.vertices = vertices;
+        ShellMesh.triangles = triangles;
+        ShellMesh.uv = uv;
+        ShellMesh.RecalculateNormals(); //normal is perpendicular to the triangle it is trying to form. normals tell which way a vertex is facing. this is useful for lighting
 
     }
 }

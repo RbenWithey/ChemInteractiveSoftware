@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class ElementHolder : MonoBehaviour
 {
-    public Element element;
+    public Element element; //this script simple holds onto the scriptable object to be accessed by other scripts. 
 
 }

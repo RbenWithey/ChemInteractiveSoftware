@@ -11,37 +11,38 @@ public class cameraZoomController : MonoBehaviour
 
 
 {
-    public float fadeSpeed;
-    private bool fadeOut, fadeIn;
-    private Vector3 des;
+    public float fadeSpeed; //how quickly the TextBox alpha value is able to fade in or out
+    private bool fadeOut, fadeIn; //these variables are used to show when the camera has zoomed passed a certain point, and therefore what state to be in and what code to run - again relates to the opacity of the textbox. 
+    private Vector3 des; //both of these vectors are used in the lerp, which is to gradually move an object between two known vectors. 
     private Vector3 start;
-    private float fraction = 0;
-    public float lerpSpeed = 0.01f;
-    public CanvasGroup CanvasAlpha;
-    public bool FadeOutRunning, FadeInRunning;
+    private float fraction = 0; //this is the value used to interpolate between the two vectors. 
+    public float lerpSpeed = 0.01f; //this is multiplied with time to work out the fraction to be used in the lerp function. 
+    public CanvasGroup CanvasAlpha; //gets the canvas of the text information box for the atom. 
+    public bool FadeOutRunning, FadeInRunning; //variables more so for testing to see in the inspector. 
+
 
     //public GameObject TextObject;
     //TextObject = GameObject.Find("Element Information");
 
-    private Camera cam;
-    private float targetZoom;
-    public float zoomFactor = 2;
-    private float yVelocity = 0.0f;
-    [SerializeField] private float zoomLerpSpeed = 10;
+    private Camera cam; //allows us to put whatever cam we want as this variable - Secondary camera in this case. 
+    private float targetZoom; // this is the original zoom state / size of the camera
+    public float zoomFactor; //how much we want to increase or decrease the zoom of the camera by multiplying this with how the scroll wheel is used. 
+    private float yVelocity; //this is the speed of the lerp. 
+    [SerializeField] private float zoomLerpSpeed = 10; //serialize field saves the state of an object in order to be able to recreate it when needed. public variables automatically do this in unity. 
 
     // Start is called before the first frame update
     void Start()
     {
-        cam = GameObject.Find("SecondaryCamera").GetComponent<Camera>();
-        targetZoom = cam.orthographicSize;
-        targetZoom = targetZoom + 0.000001f;
+        cam = GameObject.Find("SecondaryCamera").GetComponent<Camera>(); //finds the secondary camera, adds it to the cam variable and gets the objects camera component. 
+        targetZoom = cam.orthographicSize; //finds the size of the camera and therefore its zoom 
+        targetZoom = targetZoom + 0.000001f; //found this number to be preferable for the starting position, and didnt change it in the inspector. 
 
     }
 
-    void ZoomOutReallyFar()
+    void ZoomOutReallyFar() //nearly the same code as other subs. basically moves the camera back to the centre position when zoomed out very far. when mid range, the camera is slightly to the left, and when zoomed in centred again 
     {
         start = cam.transform.position;
-        des = new Vector3(815f, -4.5f, 0.691836f);
+        des = new Vector3(815f, -4.5f, 0.691836f); 
         fadeIn = false;
 
         if (fraction < 1)
@@ -108,10 +109,10 @@ public class cameraZoomController : MonoBehaviour
 
 
 
-    void ZoomOutTooFar()
+    void ZoomOutTooFar() //this run when you zoom out far enough so the text box has to be faded back in. 
     {
         start = cam.transform.position;
-        des = new Vector3(815.3f, -4.5f, 0.691836f);
+        des = new Vector3(815.3f, -4.5f, 0.691836f); //slight difference in x axis position 
 
         if (fraction < 1)
         {
@@ -132,12 +133,12 @@ public class cameraZoomController : MonoBehaviour
 
             
 
-            StartCoroutine(FadeInCR());
+            StartCoroutine(FadeInCR()); //runs co routine to fade in 
             FadeInRunning = true;
 
-            if (FadeOutRunning == true)
+            if (FadeOutRunning == true) //makes sure if the fade out co routine is running it should be stopped in order to allow the fade in to run. co routine can run at the same time, so we must check to stop them before running any others to prevent confusion
             {
-                StopCoroutine(FadeOutCR());
+                StopCoroutine(FadeOutCR()); //stops fade out co routine. 
                 FadeOutRunning = false;
             }
 
@@ -169,40 +170,41 @@ public class cameraZoomController : MonoBehaviour
 
     }
 
-    public void ZoomInTooFar()
+    public void ZoomInTooFar() //zoomed in too far, so the text box must gradually fade out 
     {
-        start = cam.transform.position;
-        des = new Vector3(815, -4.5f, 0.691836f);
+        start = cam.transform.position; //gets the starting position of the cam
+        des = new Vector3(815, -4.5f, 0.691836f); //this is the new destination we want the cam to go to
 
 
 
-        if (fraction < 1)
+        if (fraction < 1) //when the fraction is less than 1 (aka the lerp has not finished moving to its final position 
         {
-            fraction += Time.deltaTime * lerpSpeed;
+            fraction += Time.deltaTime * lerpSpeed; //updates the value fraction based on the time taken and the lerp speed 
 
-            cam.transform.position = Vector3.Lerp(start, des, fraction);
+            cam.transform.position = Vector3.Lerp(start, des, fraction); //moves the cameras position using the lerp function on its pos vector, using the starting position, the destination and the fraction. 
         }
 
-        if (fraction >= 1) //this is hear as https://answers.unity.com/questions/265439/vector3lerp-only-working-once.html
+        if (fraction >= 1) //this is hear as https://answers.unity.com/questions/265439/vector3lerp-only-working-once.html 
+            //if the fraction becomes more than 1, then the lerp is finished and wont run (as 0 means it needs to start, 1 is finished). this means if we get here and the lerp code has already been run, then it wont run without this code here turning the fraction back to 0 
         {
             fraction = 0;
         }
 
-        if (fadeOut == true)
+        if (fadeOut == true) //if this is true then we want to fade out the textbox. 
         {
           
 
-            StartCoroutine(FadeOutCR());
+            StartCoroutine(FadeOutCR()); //calls the fade out co routine. this is the function that does the gradual fading out 
             FadeOutRunning = true;
 
-            if (FadeInRunning == true)
+            if (FadeInRunning == true) //if the fadein co routine is running it needs to be stopped in order for the fade out to occur
             {                              
-                StopCoroutine(FadeInCR());
+                StopCoroutine(FadeInCR()); //stops the co routine.
                 FadeInRunning = false;
             }
         }
 
-        fadeOut = false; 
+        fadeOut = false; //fade out becomes false again so it doesnt enter the loop again whilst still faded out
 
         //if (fadeOut == true)
         //{
@@ -237,20 +239,20 @@ public class cameraZoomController : MonoBehaviour
 
     {
 
-        float size = GameObject.Find("SecondaryCamera").GetComponent<Camera>().orthographicSize;
+        float size = cam.orthographicSize; //this gets the size of thew ortho cam again
 
-        if (size * 2  < 0.46f && fadeIn == false)
+        if (size * 2  < 0.46f && fadeIn == false) //if the size of the camera doubled is less than 0.46 and fadein is not running (meaning the box is fully faded back in)
         {
             //Debug.Log("Enter zoomed in too far");
 
             //cam.transform.position = new Vector3(815, -4.5f, 0.691836f);
             //want it to fade out here
-            fadeOut = true;
+            fadeOut = true; //fade out becomes true 
 
-            ZoomInTooFar();
-            StopCoroutine("ZoomInTooFar");
+            ZoomInTooFar(); //zoom in too far is called
+            //StopCoroutine("ZoomInTooFar");
             //zoom in and out really far
-            StopCoroutine("ZoomOutReallyFar");
+            //StopCoroutine("ZoomOutReallyFar");
             //StopCoroutine("ZoomInReallyFar");
 
 
@@ -259,33 +261,33 @@ public class cameraZoomController : MonoBehaviour
         //FOR SOME REASON DEPENDENT ON TIME WHICH IS VERY CONFUSING 
         //NEED TO MAKE IT SO THAT IT CAN ALSO WORK IN REVERSE
 
-        if (size * 2 > 0.46f && fadeOut == false || size * 2 < 0.69 && fadeOut == true)
+        if (size * 2 > 0.46f && fadeOut == false || size * 2 < 0.69 && fadeOut == true) //if camera size * 2 is more than 0.46 and fade out is false or the size * 2 is more than 0.69 and fade out = true then 
         {
             //cam.transform.position = new Vector3(815.3f, -4.5f, 0.691836f); //slightly to the right, normal secondary camera just has 815
             //Debug.Log("Zoom out again");
             
-            fadeIn = true;
+            fadeIn = true; //fade in becomes true 
 
-            ZoomOutTooFar();
+            ZoomOutTooFar(); //runs this sub. //the zoom subs all change the position of the camera using a lerp, and use a co routine in order to change the alpha value of the canvas to clear or not in order to get the best view or information. 
 
-            StopCoroutine("ZoomOutTooFar");
-            StopCoroutine("ZoomOutReallyFar");
+            //StopCoroutine("ZoomOutTooFar");
+            //StopCoroutine("ZoomOutReallyFar");
             //StopCoroutine("ZoomInReallyFar");
 
             //zoom in and out really far
         }
 
-        if (size * 2 > 0.70f && fadeIn == false)
+        if (size * 2 > 0.70f && fadeIn == false) //if the size of the camera * 2 > 0.7 and the box is not faded in 
         {
             //cam.transform.position = new Vector3(815.3f, -4.5f, 0.691836f); //slightly to the right, normal secondary camera just has 815
             //Debug.Log("Zoom out again");
 
-            fadeOut = true;
+            fadeOut = true; //fade out = true 
 
             ZoomOutReallyFar();
 
-            StopCoroutine("ZoomOutTooFar");
-            StopCoroutine("ZoomInTooFar");
+            //StopCoroutine("ZoomOutTooFar");
+            //StopCoroutine("ZoomInTooFar");
             //zoom in really far 
             //StopCoroutine("ZoomInReallyFar");
         }
@@ -336,22 +338,23 @@ public class cameraZoomController : MonoBehaviour
 
     }
     //TRY TO SNMOOTH OUT THE CO ROUTINES
-    private IEnumerator FadeOutCR()
+    private IEnumerator FadeOutCR() //this is a co routine. a coroutine is a function that can suspend its execution until the given yieldinstruction is given 
     {
         //DONT DO STOP ALL COROUTINES ON EITHER CO ROUTINE VERY BUGGY
         //float duration = 0.3f; //0.5 secs
         //float currentTime = 0f;
-        float fadeSpeed = 4f;
+        float fadeSpeed = 4f; //this variable is the fade speed for fading out. 
 
-        float objectColor = CanvasAlpha.alpha;
-        if (objectColor > 0)
+        float objectColor = CanvasAlpha.alpha; //this gets the alpha value for the colour of the text box to be faded. alpha value controls the opacity of an objects material. 
+        if (objectColor > 0) //if the alpha value is above 0 (so is still viewable and not clear)
         {
             //float alpha = Mathf.Lerp(1f, 0f, currentTime / duration);
             //text.color = new Color(text.color.r, text.color.g, text.color.b, alpha);
             //currentTime += Time.deltaTime;
 
            // Color objectColor = text.color;
-            float fadeAmount = objectColor - (fadeSpeed * Time.deltaTime);
+
+            float fadeAmount = objectColor - (fadeSpeed * Time.deltaTime); //this codes gradually fades the object colour. gradually changes the alpha of the canvas by taking away the fade speed * time from the object colour. this becomes the new alpha value. 
 
             objectColor = fadeAmount;
             CanvasAlpha.alpha = objectColor;
@@ -360,9 +363,9 @@ public class cameraZoomController : MonoBehaviour
             //Debug.Log("alpha value of faded text " + text.color.a);
             //Debug.Log("Still running out");
 
-            yield return null; // WaitForSeconds(1f);
+            yield return null; // WaitForSeconds(1f); //once 0 is returned then the code stops. 
         }
-        yield break;    
+        yield break;    //yield break statements are like a return statements which dont return a value. once a loop has completed all its cycles
     }
 
     private IEnumerator FadeInCR()

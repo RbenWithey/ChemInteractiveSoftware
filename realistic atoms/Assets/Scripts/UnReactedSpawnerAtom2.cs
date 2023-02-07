@@ -140,7 +140,7 @@ public class UnReactedSpawnerAtom2 : MonoBehaviour
             foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom2"))
             {
                 ToDestroyListAtom2.Add(atomObj);
-                atomObj.AddComponent<AddSpeedToMolecules>();
+                //atomObj.AddComponent<AddSpeedToMolecules>();
             }
 
         }
@@ -153,7 +153,7 @@ public class UnReactedSpawnerAtom2 : MonoBehaviour
             foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom2"))
             {
                 ToDestroyListAtom2.Add(atomObj);
-                atomObj.AddComponent<AddSpeedToMolecules>();
+                //atomObj.AddComponent<AddSpeedToMolecules>();
             }
         }
 

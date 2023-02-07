@@ -20,7 +20,6 @@ public class UnReactedSpawner : MonoBehaviour
     public List<GameObject> ToDestroyListAtom1 = new List<GameObject>();
     public GameObject gamearea;
 
-    
     public GameObject unreactedSpawner;
     private GameObject new_atom;
     public GameObject Textbox1;
@@ -199,7 +198,7 @@ public class UnReactedSpawner : MonoBehaviour
             foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
             {
                 ToDestroyListAtom1.Add(atomObj);
-                atomObj.AddComponent<AddSpeedToMolecules>();
+                //atomObj.AddComponent<AddSpeedToMolecules>();
             }
 
         }
@@ -212,7 +211,7 @@ public class UnReactedSpawner : MonoBehaviour
             foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
             {
                 ToDestroyListAtom1.Add(atomObj);
-                atomObj.AddComponent<AddSpeedToMolecules>();
+                //atomObj.AddComponent<AddSpeedToMolecules>();
             }
         }
 

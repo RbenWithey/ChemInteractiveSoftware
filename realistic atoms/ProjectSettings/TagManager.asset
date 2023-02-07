@@ -17,6 +17,9 @@ TagManager:
   - Atom1
   - Atom2
   - Spawner
+  - Molecule
+  - InMolecule
+  - SliderTag
   layers:
   - Default
   - TransparentFX

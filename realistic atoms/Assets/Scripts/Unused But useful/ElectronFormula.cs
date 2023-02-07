@@ -24,7 +24,7 @@
 //        for (int i = 0; i < electrons; i++)
 //        {
 
-//            //find the radius of the ring 
+//            //find the radius of the Shell 
 //            //use this to work out the circle
 //            //can move electrons by doing rotation.90 or whatever 
 
@@ -41,7 +41,7 @@
             
 
 
-//                //we now have the circumference of the first ring
+//                //we now have the circumference of the first Shell
 
                
 

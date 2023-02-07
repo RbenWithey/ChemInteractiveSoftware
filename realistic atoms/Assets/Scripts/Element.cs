@@ -4,8 +4,8 @@ using TMPro;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Element")]
-public class Element : ScriptableObject 
-{
+public class Element : ScriptableObject //this script creates the scriptable object class element, which contains information for each individual atom. 
+{ //this means i dont have to make this information for each element, rather can use this and slightly alter the numbers. 
     public int Neutrons;
     public int Protons;
     public int shells;

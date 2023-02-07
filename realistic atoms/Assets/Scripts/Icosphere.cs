@@ -7,10 +7,10 @@ using UnityEngine;
 
 
 //this script is to do with actually making the mesh of the icosphere to be used by the mesh filter
-public static class Icosphere //public static class cant have instances of it. class is like a template for the instances made of it during runtime. 
+public static class Icosphere //public - means it is visible from classes in other scripts. static class means it isnt attached to a specific instance of it. it is essential a function to create something. class is like a template for the instances made of it during runtime. 
 {
     
-    private struct TriangleIndices
+    private struct TriangleIndices //declares a structure of integers to be used for triangle indices. 
     {
         public int v1;
         public int v2;
@@ -27,7 +27,7 @@ public static class Icosphere //public static class cant have instances of it. c
     // return index of point in the middle of p1 and p2
     private static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float radius)
     {
-        // first check if we have it already
+        //first check if we have it already
         bool firstIsSmaller = p1 < p2;
         long smallerIndex = firstIsSmaller ? p1 : p2;
         long greaterIndex = firstIsSmaller ? p2 : p1;
@@ -39,70 +39,56 @@ public static class Icosphere //public static class cant have instances of it. c
             return ret;
         }
 
-        // not in cache, calculate it
+        //if not in cache, calculate it
         Vector3 point1 = vertices[p1];
         Vector3 point2 = vertices[p2];
-        Vector3 middle = new Vector3
-        (
-            (point1.x + point2.x) / 2f,
-            (point1.y + point2.y) / 2f,
-            (point1.z + point2.z) / 2f
-        );
+        Vector3 middle = new Vector3((point1.x + point2.x) / 2f, (point1.y + point2.y) / 2f, (point1.z + point2.z) / 2f);
 
-        // add vertex makes sure point is on unit sphere
+        // add vertex makes sure point is on the unit sphere
         int i = vertices.Count;
         vertices.Add(middle.normalized * radius);
 
-        // store it, return index
+        //store it, return index
         cache.Add(key, i);
 
         return i;
     }
 
-
-   
-
-
-    public static void Create(GameObject gameObject, PhysicMaterial BounceMat, Vector3 position, int AtomCheckNumber)
+    public static void Create(GameObject gameObject, PhysicMaterial BounceMat, Vector3 position, int AtomCheckNumber, Material moleculeMaterial)
     {
        //put names and tags here 
 
-        if (AtomCheckNumber == 1)
+        if (AtomCheckNumber == 1) //if the atom check number is one. 
         {
-            gameObject.name = "UnReactedAtom1";
+            gameObject.name = "UnReactedAtom1"; //if the atom check number is 1, the 'atom' being generated is of the the type atom 1 game object.
 
-            gameObject.tag = "Atom1";
+            gameObject.tag = "Atom1"; //adds atom 1 tag to make adding it to the list later on easier.
         }
         else
         {
-            gameObject.name = "UnReactedAtom2";
+            gameObject.name = "UnReactedAtom2"; //similar process except for atom 2
 
             gameObject.tag = "Atom2";
         }
 
-        gameObject.transform.position = position;
+        gameObject.transform.position = position; //the position is a randomized point in a circle in a previous script and pass through
 
-        Rigidbody rb = gameObject.AddComponent<Rigidbody>();
-        rb.useGravity = false;
+        //this section here is addnig components to the game object in order for it to act like a sphere in collision theory 
+        Rigidbody rb = gameObject.AddComponent<Rigidbody>(); //adds a rigidbody to the game object
+        rb.useGravity = false; //allows it to float unless knocked or given kinetics.
+        rb.constraints = RigidbodyConstraints.FreezePositionZ; //adds contraints to the rb to prevent it from moving on the z axis and therefore out of the 'reaction vessel' 
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous; //prevents clipping or other collision detection errors. 
+        MeshFilter filter = gameObject.GetComponent<MeshFilter>(); //adds a mesh filter -stores the mesh data generated
+        Mesh mesh = filter.mesh; //gets data for the mesh. the mesh consists of triangles arranged in 3D space to create the impression of a solid object
+        mesh.Clear(); //this clears all vertex data and all triangle indices. this prevents issues from arisining before we rebuild the triangles array
+        Vector3[] vertices = gameObject.GetComponent<MeshFilter>().mesh.vertices; //sets up a vector 3 array for the vertices, adding it to the mesh filter component
+        List<Vector3> vertList = new List<Vector3>(); //sets up a list of vectors
+        Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>(); //sets up the cache for the middle point. use a dictionary as it is based in key-value correspondance - a key corresponds to a single value - makes it simpler
+                                                                                   //suitable for nwhen you have a group of objects in a set (in this case the middle points).
+        rb.isKinematic = false; //makes the rigid body of the gameobject non kinematic. 
 
-        rb.constraints = RigidbodyConstraints.FreezePositionZ;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        
-
-        MeshFilter filter = gameObject.GetComponent<MeshFilter>();
-
-        //MeshCollider mc = gameObject.AddComponent<MeshCollider>();            WE need to make this more complex. 
-        //mc.convex = true;
-
-
-
-
-        Mesh mesh = filter.mesh;
-        mesh.Clear();
-        Vector3[] vertices = gameObject.GetComponent<MeshFilter>().mesh.vertices;
-        List<Vector3> vertList = new List<Vector3>();
-        Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
-        //int index = 0;
+        gameObject.AddComponent<Collision>(); //adds the collision script to each atom. 
+        gameObject.GetComponent<Collision>().MoleculeMaterial= moleculeMaterial; //gets the molecule material component from the collision class. 
 
         int recursionLevel = 3;
         float radius = 1f;
@@ -177,7 +163,7 @@ public static class Icosphere //public static class cant have instances of it. c
             faces = faces2;
         }
 
-        mesh.vertices = vertList.ToArray();
+        mesh.vertices = vertList.ToArray(); //converts the vert list to an array and adds it to the mesh. 
 
         List<int> triList = new List<int>();
         for (int i = 0; i < faces.Count; i++)
@@ -186,40 +172,30 @@ public static class Icosphere //public static class cant have instances of it. c
             triList.Add(faces[i].v2);
             triList.Add(faces[i].v3);
         }
-        mesh.triangles = triList.ToArray();
-        mesh.uv = new Vector2[vertices.Length];
+        mesh.triangles = triList.ToArray(); //converts the triangle list to array and then adds it to the mesh
+        mesh.uv = new Vector2[vertices.Length]; //adds UV to all the vertices
 
         Vector3[] normales = new Vector3[vertList.Count];
         for (int i = 0; i < normales.Length; i++)
-            normales[i] = vertList[i].normalized;
+        {
+            normales[i] = vertList[i].normalized; //for each of the vertices in the list, they are normalized and then added to the normales array
+        }
+            
 
 
-        mesh.normals = normales;
+        mesh.normals = normales; //adds the normals array to the normals of the mesh
 
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
         mesh.RecalculateNormals();
 
-        gameObject.AddComponent<MeshCollider>();
-        MeshCollider mc = rb.GetComponent<MeshCollider>();
-        mc.convex = true;
-        mc.sharedMesh = mesh;
-
-        
-
-        mc.material = BounceMat;
-   
-
-        //gameObject.AddComponent<GiveObjKinetics>();
-        mesh.Optimize();
-
-        
+        gameObject.AddComponent<MeshCollider>(); //adds a mesh collider to the gameobject
+        MeshCollider mc = rb.GetComponent<MeshCollider>(); //gets mesh collider from the rigidbody
+        mc.convex = true; //makes the mesh collider convex
+        mc.sharedMesh = mesh; //sets the mesh made as the mesh of the mesh collider.
+        mc.material = BounceMat; //applies the bounce material to the material of the mesh collider
+        mesh.Optimize(); //optimises the mesh -improves rendering. 
 
     }
-
-
-
-
-
 }
 

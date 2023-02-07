@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 public class PopUpSystem : MonoBehaviour
-{
+{ //this script is used to print an error message when the input is 
     public GameObject popUpBox;
     public Animator Animator;
     public TMP_Text popUpText;
