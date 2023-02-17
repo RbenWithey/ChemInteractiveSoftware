@@ -45,7 +45,7 @@ public class GenerateAtomModel : MonoBehaviour
         //nucleusSphere.GetComponent<Attractor>().rb = nucleusSphere.GetComponent<Rigidbody>();
         //nucleusSphere.GetComponent<Rigidbody>().mass = 1000000;
 
-
+         
 
         int neutrons = element.Neutrons; //gets the number of neutrons and protons required to make the nucleus of the atom. 
         int protons = element.Protons;

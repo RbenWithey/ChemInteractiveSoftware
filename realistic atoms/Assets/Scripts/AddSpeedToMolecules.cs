@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class AddSpeedToMolecules : MonoBehaviour
 {
     public Vector2 v;
-    private Vector2 direction;
+    //private Vector2 direction;
 
     private int CurrentSpeed;
 
@@ -41,91 +41,92 @@ public class AddSpeedToMolecules : MonoBehaviour
     //}
 
 
-    private void Update()
+    private void Update() //every frame, we get the slider value component and update the value of the current speed variable. 
     {
         CurrentSpeed = (int)GetComponent<Slider>().value;
     }
 
-    public float GetValue()
+    public float GetValue() //get value returns the current speed value (which is public and be accessed throughout all of the software. 
     {
         Debug.Log(CurrentSpeed);
-        return CurrentSpeed;
+        return CurrentSpeed; //returns this value to 
     }
 
-    public void CheckCurrentSetSpeed(int valuetostring) //so this should get the speed of the thing now we need to make it be called whenever the value changes. 
-    {
+    //public void CheckCurrentSetSpeed(int valuetostring) //so this should get the speed of the thing now we need to make it be called whenever the value changes. 
+    //{
 
-        int speed = valuetostring;
+    //    int speed = valuetostring;
 
-        //Debug.Log("Current Temp is " + speed);
+    //    //Debug.Log("Current Temp is " + speed);
 
-        //GetComponent<AddSpeedToMolecules>().UpdateSpeedOfMolecules(speed);
+    //    //GetComponent<AddSpeedToMolecules>().UpdateSpeedOfMolecules(speed);
 
-        UpdateSpeedOfMolecules(speed);
-        CurrentSpeed = speed;
-        //int CurrentSpeed = GetComponent<SliderController>().CheckCurrentSetSpeed();7
+    //    UpdateSpeedOfMolecules(speed);
+    //    CurrentSpeed = speed;
+    //    //int CurrentSpeed = GetComponent<SliderController>().CheckCurrentSetSpeed();7
 
-    }
+    //}
 
 
     //    //gradually loses velocity over time
 
     //}
 
-    public List<GameObject> MovingObjectsSpeed = new List<GameObject>();
+    //public List<GameObject> MovingObjectsSpeed = new List<GameObject>();
 
-    public void UpdateSpeedOfMolecules(int speed)
-    {
-        Debug.Log(speed);
-        MovingObjectsSpeed.Clear();
-
-
-        foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
-        {
-            MovingObjectsSpeed.Add(atomObj);
-
-        }
-
-        foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom2"))
-        {
-            MovingObjectsSpeed.Add(atomObj);
-
-        }
-
-        foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Molecule"))
-        {
-            MovingObjectsSpeed.Add(atomObj);
-
-        }
-
-        //Debug.Log("Speed we are trying to change it to is " + speed);
-
-        //need to get a list of the atom and the molecules, perhaps look for the tag and then add to the list
-        //then we need to go through the list and add the new velocity to each of the atoms/molecules. 
-
-        //int CurrentSpeed = GetComponent<SliderController>().CheckCurrentSetSpeed();
+    //public void UpdateSpeedOfMolecules(int speed)
+    //{
+    //    Debug.Log(speed);
+    //    MovingObjectsSpeed.Clear();
 
 
-        //added all the moving object to the list and the speed when it changes. 
+    //    foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
+    //    {
+    //        MovingObjectsSpeed.Add(atomObj);
+
+    //    }
+
+    //    foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom2"))
+    //    {
+    //        MovingObjectsSpeed.Add(atomObj);
+
+    //    }
+
+    //    foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Molecule"))
+    //    {
+    //        MovingObjectsSpeed.Add(atomObj);
+
+    //    }
+
+    //    //Debug.Log("Speed we are trying to change it to is " + speed);
+
+    //    //need to get a list of the atom and the molecules, perhaps look for the tag and then add to the list
+    //    //then we need to go through the list and add the new velocity to each of the atoms/molecules. 
+
+    //    //int CurrentSpeed = GetComponent<SliderController>().CheckCurrentSetSpeed();
 
 
-        foreach (GameObject atomObj in MovingObjectsSpeed)
-        {
-            Debug.Log("this is entered?");
-            //add a random direction to all of them 
+    //    //added all the moving object to the list and the speed when it changes. 
 
-            //current problems is sorting out the list and then changing the speed of the objects in the list. 
 
-            v = v.normalized; //this should give me constant velocity. normalising removes length. if direction is 0, then speed * 0 is also 0. 
-            v *= speed;
-            //atomObj.GetComponent<Rigidbody>().velocity = v;
+    //    foreach (GameObject atomObj in MovingObjectsSpeed)
+    //    {
+    //        Debug.Log("this is entered?");
+    //        //add a random direction to all of them 
 
-            Debug.Log("this is the value of v " + v);
+    //        //current problems is sorting out the list and then changing the speed of the objects in the list. 
 
-        }
+    //        v = v.normalized; //this should give me constant velocity. normalising makes length 1. if speed is 0, then 1 * 0 is also 0 hence the error at 0 degrees celcius occurs. direction is the same, but the length is 1
+    //        //normalizing is useful for determining direction. 
+    //        v *= speed;
+    //        //atomObj.GetComponent<Rigidbody>().velocity = v;
 
-        //we need a list of moving objects, but we cant add them to the list each time the slider changes otherwise it just fills the list to no end. 
-        //plan to go through the list and individually give all moving objects the same speed. 
-    }
+    //        Debug.Log("this is the value of v " + v);
+
+    //    }
+
+    //    //we need a list of moving objects, but we cant add them to the list each time the slider changes otherwise it just fills the list to no end. 
+    //    //plan to go through the list and individually give all moving objects the same speed. 
+    //}
 
 }

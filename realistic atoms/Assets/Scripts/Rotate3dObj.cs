@@ -18,22 +18,22 @@ public class Rotate3dObj : MonoBehaviour
 
 
     // Update is called once per frame
-    private void Update()
+    private void Update() //check every frame to see if their is a mouse input.
     {
         if (Input.GetMouseButton(0)) //when mouse is held down, storing the directional movement values of the mouse in float variables and multiplying them by a strength value
         {
-            rotate = true;
+            rotate = true; //if we want the object with this script on it to rotate, then set as true 
             rotX = Input.GetAxis("Mouse X") * strength;
             rotY = Input.GetAxis("Mouse Y") * strength;
          
         }
         else
         {
-            rotate = false;
+            rotate = false; //otherwise if not then dont rotate the object. 
         }
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate() //every fixed update, apply the force/torque to the object which uses the rotX and rotY values which were worked out earlier in the script. 
     {
         if (rotate)
         {

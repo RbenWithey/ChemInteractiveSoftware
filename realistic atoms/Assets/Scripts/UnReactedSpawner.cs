@@ -34,17 +34,18 @@ public class UnReactedSpawner : MonoBehaviour
 
     private int AtomCheckValue = 1;
     public string PopUp;
+    public string PopUp2;
 
     //this is to do with objects leaving view, but as in a container not needed, however could look into if we want to control spawning and despawning in an open area.
 
-    public float spawn_circle_radius = 300.0f; //use this for random position initial of the atoms, use inside unit circle to find a random position anywhere within a circle
+    public float spawn_circle_radius = 300.0f; //use this for random position of the atoms, use inside unit circle to find a random position anywhere within a circle
     public float death_circle_radius = 700.0f;
-    public float speed = 20.0f;
-    public string TextEntered;
+ 
+
     bool AboveLimit;
 
 
-    private void Start()
+    private void Start() //gets the input field from the TMP_input field component, and sets the text within it at zero so that a null error exception is not thrown. 
     {
         
 
@@ -54,7 +55,7 @@ public class UnReactedSpawner : MonoBehaviour
         TextComponent.text = "0";
     }
 
-    int OnEnterPressed()
+    int OnEnterPressed() //when enter is pressed this section of code is run. finds the entered atom number from the value returned from the find new atom limit sub. and this is then returned to the update function. 
     {
         EnteredAtomNumber = FindNewAtomLimit();
 
@@ -64,33 +65,33 @@ public class UnReactedSpawner : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    void Update() //checks every frame to see if the enter or return key is being held down. 
     {
 
 
 
-        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) //if the enter or return key is being held down
         {
            //put a do loop here once sorted the deleting problem
            
-                AtomNumber = OnEnterPressed();
+                AtomNumber = OnEnterPressed(); //atom number is returned from the on enter pressed sub
 
             Debug.Log("Atom number is " + AtomNumber);
 
 
-            if (AtomNumber == -1)
+            if (AtomNumber == -1) //if the atom number returned is -1, that means it was not in a valid format/data type/could not be parsed to an integer 
             {
 
                 Debug.Log("Pop system loop entered");
-                PopUpSystem pop = GameObject.FindGameObjectWithTag("Menu").GetComponent<PopUpSystem>();
-                pop.PopUp(PopUp);
+                PopUpSystem pop = GameObject.FindGameObjectWithTag("Menu").GetComponent<PopUpSystem>(); //this finds the game object with the pop up system code on it 
+                pop.PopUp(PopUp); //calls the popup function from the popup script and passes in pop up, which contains the error information. this means we can potentially have multiple messages displayed for multiple issues. 
 
             }
             else
             {
 
                 Debug.Log("Maintain entered");
-                MaintainPopulation(AtomNumber);
+                MaintainPopulation(AtomNumber); //else we can go on and check how the inputted number will affect the population, or if it is too large.
 
 
 
@@ -105,21 +106,22 @@ public class UnReactedSpawner : MonoBehaviour
         
     }
 
-    int FindNewAtomLimit()
+    int FindNewAtomLimit() //this sub firstly places a text string into the input field to prevent the code from accessing the it, and returning a null value exception. then it tries to parse the text in and turn it into a int
+        // if the value is successfully parsed, and is bigger than or equal to 0, then we return a one to show the number entered is valid and returned, else we return a -1 to show it is not valid. 
     {
         
-        string text = "0";
-        text = Textbox1.GetComponent<TMP_InputField>().text;
+        string text = "0"; //temp text to fill input field 
+        text = Textbox1.GetComponent<TMP_InputField>().text; //gets the input field text component. 
         int NumberTried;
 
-        bool isNumber = int.TryParse(text, out NumberTried);
+        bool isNumber = int.TryParse(text, out NumberTried); //parses the text as an integer
 
-        if (isNumber == true && NumberTried >= 0)
+        if (isNumber == true && NumberTried >= 0) //larger or equal to zero and has been successfully parsed
         {
-            int number = int.Parse(text); //this doesnt work
+            int number = int.Parse(text); //parses the text as an int again and then return it 
             return number;
         }
-        else
+        else //else return a -1 to show it is not valid. 
         {
 
             return -1;
@@ -132,7 +134,7 @@ public class UnReactedSpawner : MonoBehaviour
         //so we find thw number of atom through this 
     }
 
-    void ToDestroy()
+    void ToDestroy() //this is called in order to destroy all of the atoms present in the collision theory scene 
     {
 
 
@@ -144,7 +146,7 @@ public class UnReactedSpawner : MonoBehaviour
         Debug.Log("ToDestroy is entered");
         //int counter = 0;
 
-        foreach (GameObject obj in ToDestroyListAtom1)
+        foreach (GameObject obj in ToDestroyListAtom1) //destroys all of the atom 1 game objects. 
         {
       
             Destroy(obj.gameObject);
@@ -157,7 +159,7 @@ public class UnReactedSpawner : MonoBehaviour
         //and then call the add one for example. THIS IS WHERE YOU FINISHED ON THE 30 OF NOVEMBER HOPEFULLY WILL BE ABLE TO LOOK AT THIS TOMORROW. 
     }
 
-    void ToCreate(int AtomNumber)
+    void ToCreate(int AtomNumber) //this sub is used to create the set amount (the atom number value passed in to the parameters) of atoms
     {
         for (int j = 0; j < AtomNumber; j++)
         {
@@ -165,39 +167,41 @@ public class UnReactedSpawner : MonoBehaviour
 
             //this makes atoms but we need a way to remove them
 
-            Vector3 position = GetRandomPosition();
-            new_atom = GenAtom(position, AtomCheckValue);
+            Vector3 position = GetRandomPosition(); //gets a random position value returned from the get random position sub. 
+            new_atom = GenAtom(position, AtomCheckValue); //then generate the actual new_atom game object, passiong in the randomized position and atom check value as arguments.
             
 
             //new_atom.GetComponent<AtomScript>();
         }
     }
 
-    void MaintainPopulation(int AtomNumber)
+    void MaintainPopulation(int AtomNumber) //this sub is used to ensure the number of atoms currently present never exceeds the max atom limit set by me. 
     {
 
        
 
-        if (AtomNumber > MaxAtomLimit)
+        if (AtomNumber > MaxAtomLimit) //if the atom number inputted by the user is more than the max atom limit then the above limit is set as true 
         {
             AboveLimit = true;
+            PopUpSystem pop = GameObject.FindGameObjectWithTag("Menu").GetComponent<PopUpSystem>(); //this finds the game object with the pop up system code on it 
+            pop.PopUp(PopUp2); //passes the string error message, in this case error message 2, to the pop up function, so it can be displayed to the user 
         }
-        else
+        else //else it is not more than the above limit. 
         {
             AboveLimit = false;
         }
 
         //maybe make a sub for each of these if things, then call
 
-        if (AtomCount < AtomNumber & AboveLimit == false)
+        if (AtomCount < AtomNumber & AboveLimit == false) //if the atom count (number of atoms currently spawned) is less than the atom number and it is not above the atom limit (above limit is false), then we can go ahead and create the number of atoms needed.
         {
 
             //Debug.Log("Number entered is below 250 and larger than the original");
             ToCreate(AtomNumber);
 
-            foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
+            foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1")) //for each of the objects with the atom1tag, they are added to a destroy list, so that when we need to we can easily remove some or all of the atom1's from the population
             {
-                ToDestroyListAtom1.Add(atomObj);
+                ToDestroyListAtom1.Add(atomObj); //adds to list
                 //atomObj.AddComponent<AddSpeedToMolecules>();
             }
 
@@ -205,10 +209,10 @@ public class UnReactedSpawner : MonoBehaviour
 
         if (AtomNumber < AtomCount) //if the number inputed is less than the number of atoms counted beforehand
         {
-            ToDestroy();
-            ToCreate(AtomNumber);
+            ToDestroy(); //destroys all the atom 1's currently present
+            ToCreate(AtomNumber); //create the number of atoms inputted. 
 
-            foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1"))
+            foreach (GameObject atomObj in GameObject.FindGameObjectsWithTag("Atom1")) //once again all of these objects with the atom 1 tag are added to the destroy list so that it is easy to maintain the population
             {
                 ToDestroyListAtom1.Add(atomObj);
                 //atomObj.AddComponent<AddSpeedToMolecules>();
@@ -257,32 +261,32 @@ public class UnReactedSpawner : MonoBehaviour
 
 
 
-    Vector3 GetRandomPosition()
+    Vector3 GetRandomPosition() //this generates a random position to return to the create sub.
     {
-        Vector3 position = UnityEngine.Random.insideUnitCircle;
+        Vector3 position = UnityEngine.Random.insideUnitCircle; //the position is generated randomly within a specifically sized circle.
 
-        position *= spawn_circle_radius;
-        position += gamearea.transform.position;
+        position *= spawn_circle_radius; //the spawn circle radius multiples the position that has been generated - this means we can set how large the circle radius is and therefore what area within the atoms can spawn in. 
+        position += gamearea.transform.position; //we then add the game area position, to ensure it is generated locally in the area. 
 
-        return position;
+        return position; //position is then returned to the create sub. 
     }
 
     
 
-     GameObject GenAtom(Vector3 position, int AtomCheckNumber)
+     GameObject GenAtom(Vector3 position, int AtomCheckNumber) //this is the final sub before procedural generation. this calls the mesh generation code, passing in the random position we generated and the atom count number. it then rotates the new game object to the position calculated, and ensures it keeps its local orientation, and is not parented. 
      {
         //continue development and see if this continues 
         //figure out why the atom is not atom in the inspector, then continue at 17;54
-        AtomCount += 1;
+        AtomCount += 1; //this is different in the unreacted spawner 2 script, and shows the program we are dealing with only atom 1's in this script. 
         //Debug.Log("Add atom " + position);
-        new_atom = GetComponent<GenIcosphere>().CreateSphere(position, AtomCheckNumber);
+        new_atom = GetComponent<GenIcosphere>().CreateSphere(position, AtomCheckNumber); //this calls the create sphere sub in the gen icosphere script to make a new atom game object, passing in the randomly generated position we made and the atom check number so that the code knows to apply the correct materials. 
         
            
         //new_atom.transform.position = position;
-        new_atom.transform.rotation = Quaternion.FromToRotation(Vector3.up, (gamearea.transform.position - position));
+        new_atom.transform.rotation = Quaternion.FromToRotation(Vector3.up, (gamearea.transform.position - position)); //we then give the new object a rotation, rotating from direction vector up to the game area pos - the pos of the gameobject. 
         //new_atom.transform.parent = new_atom.transform; //dont know why this is happening WE NEED TO FIGURE OUT HOW TO MAKE THE ATOM ITS SELF RATHER THAN THE UNREACTED SPANWER BECOMING THE PARENT AND THEREFORE BEING THE THING PUT IN THE LIST. <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        new_atom.transform.SetParent(null);
+        new_atom.transform.SetParent(null); //means the atoms are not set parent to anything. keeps its local orientation rather than its global orientation. 
 
         //new_atom.tag = "Atom";
 
@@ -292,7 +296,7 @@ public class UnReactedSpawner : MonoBehaviour
         //adds the spawner instead of the atom object
 
 
-        return new_atom;
+        return new_atom; //returns the newly generated game object. 
         //sort out parent issue and why suddenly the mesh is a problem. might have been when we changed the position. 
         
       

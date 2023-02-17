@@ -11023,11 +11023,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b31052e7f27c6f945ba570246ed923b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  electronVector: {x: 0, y: 0, z: 0}
   Pivot: {fileID: 1012190196}
   spawnerspinning: {fileID: 1235791043}
   electronstospawn: {fileID: 4615728767301957777, guid: 35bc1f744b201a3428533f0bf6fc3760, type: 3}
-  ringstospawn: {fileID: 3351799325414968384, guid: d16374ad5af43b54c8efc692353d9be3, type: 3}
+  shellstospawn: {fileID: 3351799325414968384, guid: d16374ad5af43b54c8efc692353d9be3, type: 3}
   innerRadius: 0.1
   ShellMat: {fileID: 2100000, guid: fee361be123ddeb429e8e2255c22b6d6, type: 2}
   progress: 0
@@ -21586,7 +21585,6 @@ MonoBehaviour:
   speed: 50
   clockwise: 1
   direction: 1
-  directionChangeSpeed: 2
 --- !u!54 &1143617157
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -23479,7 +23477,6 @@ MonoBehaviour:
   speed: 45
   clockwise: 1
   direction: 1
-  directionChangeSpeed: 2
 --- !u!54 &1235791046
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -23529,7 +23526,6 @@ MonoBehaviour:
   speed: 10
   clockwise: 1
   direction: 1
-  directionChangeSpeed: 2
 --- !u!224 &1237023016 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5913314850205478419, guid: abca01ca7ea83594ea4c906dc25aefcd, type: 3}
@@ -34608,11 +34604,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b31052e7f27c6f945ba570246ed923b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  electronVector: {x: 0, y: 0, z: 0}
   Pivot: {fileID: 0}
   spawnerspinning: {fileID: 0}
   electronstospawn: {fileID: 4615728767301957777, guid: 35bc1f744b201a3428533f0bf6fc3760, type: 3}
-  ringstospawn: {fileID: 3351799325414968384, guid: d16374ad5af43b54c8efc692353d9be3, type: 3}
+  shellstospawn: {fileID: 0}
   innerRadius: 0.975
   ShellMat: {fileID: 0}
   progress: 0

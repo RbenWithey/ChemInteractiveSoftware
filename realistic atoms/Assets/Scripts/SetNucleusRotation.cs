@@ -8,7 +8,7 @@ public class SetNucleusRotation : MonoBehaviour
     void Start()
     {
        transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
-
+       //this script ia used to set the rotation of the pivot as 90 degrees on the y axis
        
     }
 

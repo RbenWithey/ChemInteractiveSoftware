@@ -239,7 +239,7 @@ public class HighlightElements : MonoBehaviour
 
     }
 
-    public void ResetButtonCLick()
+    public void ResetButtonCLick() //this resets the periodic table to its original state.
 
     {
         //ElementList.OrderBy(x => x.GetComponent<ElementObject>());
@@ -257,7 +257,7 @@ public class HighlightElements : MonoBehaviour
 
     }
 
-    public void ReturnToNormal() //this is used to reset the periodic table
+    public void ReturnToNormal() //this is used to reset the periodic table before each of the button clicks effects are applied. 
     {
         foreach (GameObject obj in ElementList) //for each of the game objects in the element list 
         {

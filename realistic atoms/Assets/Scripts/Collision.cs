@@ -24,29 +24,27 @@ public class Collision : MonoBehaviour
     //}
 
 
-    public Material MoleculeMaterial;
+    public Material MoleculeMaterial; //allows us to set the molecule material in the inspector (this is a yellow colour)
+    AddSpeedToMolecules molSettingScript; //Stores the add speed to molecules script as molsettingscript
+    Rigidbody rb; //stores the rigidbody of the object which has this script running on it. 
 
-
-    AddSpeedToMolecules molSettingScript;
-    Rigidbody rb;
-
-    private void Start()
+    private void Start() //this gives the game objects a random direction and works out the velocity for each of the objects with the collision script running on them
     {
-        Vector3 randomPoint = transform.position + Random.onUnitSphere;
-        Vector3 direction = randomPoint - transform.position; 
-        rb = GetComponent<Rigidbody>();
+        Vector3 randomPoint = transform.position + Random.onUnitSphere; //works out a random position within a sphere for each of the game objects with this script on it 
+        Vector3 direction = randomPoint - transform.position; //a random direction is worked out for each of the objects, with this being achieved by taking the random point away from the position of the atom. this gives the direction
+        rb = GetComponent<Rigidbody>(); //this is used to store the rigidbody component of the object 
 
-        molSettingScript = GameObject.FindGameObjectWithTag("SliderTag").GetComponent<AddSpeedToMolecules>();
+        molSettingScript = GameObject.FindGameObjectWithTag("SliderTag").GetComponent<AddSpeedToMolecules>(); //find the current speed by getting the add speed to molecules script, which is on the slider (which has the slider tag)
 
         
-        float slidertemp = molSettingScript.GetValue();
-        rb.velocity = direction * 1;
+        float slidertemp = molSettingScript.GetValue(); //we get the value from the add speed to molecules script, which initially is set to one
+        rb.velocity = direction * 1; //this sets the starting velocity as 1, since if velocity started at zero, then no matter how large the multiplier was, the velocity would always remain at 0
         //Debug.Log(rb.velocity);
     }
 
     private void Update()
     {
-        rb.velocity = (rb.velocity.normalized * molSettingScript.GetValue()) / 10;
+        rb.velocity = (rb.velocity.normalized * molSettingScript.GetValue()) / 10; //every update we check if there has been a change in the value of the slider, and therefore if we need to change the velocity of the object. this is / by 10 to prevent the atoms from reaching a high speed, potentially causing them to clip throught the collider of the walls.
     }
 
     private void OnCollisionEnter(UnityEngine.Collision collision) //on collision is run when there is a collision between two objects rigidbodys. passes in the objects collision class, which contains information such as contact points and impact velocity. 
@@ -67,8 +65,8 @@ public class Collision : MonoBehaviour
                 Atom2.tag = "InMolecule"; 
                 
 
-                ContactPoint contact = collision.GetContact(0); //gets the contact point at the specified index
-                Vector3 position = contact.point; //turns this point into a vector 3 position, therefore we now know where the collision occured. 
+                ContactPoint contact = collision.GetContact(0); //gets the contact point at the specified index, which in this case is zero
+                Vector3 position = contact.point; //turns this contact index into a vector 3 position, therefore we now know where the collision occured. 
 
                 //Molecule = new GameObject();
 

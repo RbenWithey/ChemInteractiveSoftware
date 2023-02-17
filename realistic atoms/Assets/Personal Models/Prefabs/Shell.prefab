@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4669495825332538449}
   m_Layer: 0
-  m_Name: Ring
+  m_Name: Shell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

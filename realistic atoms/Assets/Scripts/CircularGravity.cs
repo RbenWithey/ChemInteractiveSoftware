@@ -23,7 +23,7 @@ public class CircularGravity : MonoBehaviour
 
     // Update called once per frame
     void FixedUpdate() //anything physics needs to be done in fixed update to run physics rather than being called every frame - this ensures the physics calculations are not affected by frame rate. it is called every fixed framerate frame, rather than every frame. prevents physic calculations from building up and causing problems/not being inacted properly. 
-    {
+    { //this works out every fixed update the forces that need to be applied to the game objects with this code on it, in order for them to have a seemingly realistic gravitational force pull them in. 
 
         targetDirection = nucleusSphere.position - transform.position; // the nucleus sphere is the sphere object in the centre of the atom generation area. work out the vector from that to the position of each atom. Saves direction
         distance = targetDirection.magnitude; // Find distance between this object and target object

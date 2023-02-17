@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 using Unity.Collections.LowLevel.Unsafe;
 
 public class cameraZoomController : MonoBehaviour
-
+    //lerp used to change between the camera position and the alpha value of the text box, the mathf.damp method is used to gradually change the zoom/size of the camera. 
 
 {
     public float fadeSpeed; //how quickly the TextBox alpha value is able to fade in or out
@@ -25,9 +25,9 @@ public class cameraZoomController : MonoBehaviour
     //TextObject = GameObject.Find("Element Information");
 
     private Camera cam; //allows us to put whatever cam we want as this variable - Secondary camera in this case. 
-    private float targetZoom; // this is the original zoom state / size of the camera
+    private float targetZoom; // this is the original size value / zoom of the camera which is changed throughout the script. 
     public float zoomFactor; //how much we want to increase or decrease the zoom of the camera by multiplying this with how the scroll wheel is used. 
-    private float yVelocity; //this is the speed of the lerp. 
+    private float yVelocity; //used in the mathf.damp function - with this value being modified by the function every time it is called
     [SerializeField] private float zoomLerpSpeed = 10; //serialize field saves the state of an object in order to be able to recreate it when needed. public variables automatically do this in unity. 
 
     // Start is called before the first frame update
@@ -35,7 +35,7 @@ public class cameraZoomController : MonoBehaviour
     {
         cam = GameObject.Find("SecondaryCamera").GetComponent<Camera>(); //finds the secondary camera, adds it to the cam variable and gets the objects camera component. 
         targetZoom = cam.orthographicSize; //finds the size of the camera and therefore its zoom 
-        targetZoom = targetZoom + 0.000001f; //found this number to be preferable for the starting position, and didnt change it in the inspector. 
+        //targetZoom = targetZoom + 0.000001f; //found this number to be preferable for the starting position, and didnt change it in the inspector. 
 
     }
 
@@ -241,6 +241,7 @@ public class cameraZoomController : MonoBehaviour
 
         float size = cam.orthographicSize; //this gets the size of thew ortho cam again
 
+
         if (size * 2  < 0.46f && fadeIn == false) //if the size of the camera doubled is less than 0.46 and fadein is not running (meaning the box is fully faded back in)
         {
             //Debug.Log("Enter zoomed in too far");
@@ -313,37 +314,40 @@ public class cameraZoomController : MonoBehaviour
 
         float scrollData;
 
-        scrollData = Input.GetAxis("Mouse ScrollWheel");
+        scrollData = Input.GetAxis("Mouse ScrollWheel"); //gets the float value from the scroll wheel. 
 
-        targetZoom = targetZoom - scrollData * zoomFactor;
+        targetZoom = targetZoom - scrollData * zoomFactor; //changes the target zoom value by taking away the scroll data which has been multiplied by the zoom factor. target zoom is just the value of the ortho cam's size
 
 
 
-        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.UpArrow)) //if the user presses the down or the user presses the up arrow 
         {
 
-            float DownArrowData = Input.GetAxis("Vertical");
+            float DownArrowData = Input.GetAxis("Vertical"); //get the data from the key press so we know how far to move the object. 
 
-            targetZoom = targetZoom - DownArrowData * zoomFactor;
+            targetZoom = targetZoom - DownArrowData * zoomFactor; //changes the zoom of the camera based on the down arrow data being multiplied by the zoom factor. the larger the zoom factor, the quicker the zoom.
         }
 
-        targetZoom = Mathf.Clamp(targetZoom, 0.13f, 0.70f);
+        targetZoom = Mathf.Clamp(targetZoom, 0.13f, 0.70f); //returns the minimum value if the given float value is less than the minimum. returns the maximum value if the given value is greater than the max value.
 
-        cam.orthographicSize = Mathf.SmoothDamp(cam.orthographicSize, targetZoom, ref yVelocity, Time.deltaTime * zoomLerpSpeed);
+        cam.orthographicSize = Mathf.SmoothDamp(cam.orthographicSize, targetZoom, ref yVelocity, Time.deltaTime * zoomLerpSpeed); //this method gradually changes a value towards a desired goal over time. 
+        //velocity parameter is used in order to know how fast you are going in order for the function to either accelerate or decelerate. the function tries to accelerate your position towards target if it is far away, and decelerate it if it is getting close.
+        //every time the function gets called, the latest velocity value is updated into the ref parameter and then the function also returns a value. 
 
         //TOMORROW WORK ON WORKING OUT A FORMULA FOR ELECTRONS. 
 
 
-
+        
 
     }
     //TRY TO SNMOOTH OUT THE CO ROUTINES
     private IEnumerator FadeOutCR() //this is a co routine. a coroutine is a function that can suspend its execution until the given yieldinstruction is given 
+        //this just gradually decreases the object colour until it becomes zero. 
     {
         //DONT DO STOP ALL COROUTINES ON EITHER CO ROUTINE VERY BUGGY
         //float duration = 0.3f; //0.5 secs
         //float currentTime = 0f;
-        float fadeSpeed = 4f; //this variable is the fade speed for fading out. 
+        fadeSpeed = 4f; //this variable is the fade speed for fading out. 
 
         float objectColor = CanvasAlpha.alpha; //this gets the alpha value for the colour of the text box to be faded. alpha value controls the opacity of an objects material. 
         if (objectColor > 0) //if the alpha value is above 0 (so is still viewable and not clear)
@@ -368,16 +372,16 @@ public class cameraZoomController : MonoBehaviour
         yield break;    //yield break statements are like a return statements which dont return a value. once a loop has completed all its cycles
     }
 
-    private IEnumerator FadeInCR()
+    private IEnumerator FadeInCR() //use a different method to fade in the box. this utilises the lerp function, which i found much easier to use. 
     {
         
 
-        float duration = 0.3f; //0.5 secs
-        float currentTime = 0f;
-        while (currentTime < duration)
+        float duration = 0.3f; //these two values are used to work out the value used to interpolate between a and b
+        float currentTime = 0.1f;
+        while (currentTime < duration) //while the current time value is smaller than the duration. 
         {
-            float alpha = Mathf.Lerp(0f, 1f, currentTime / duration);
-            CanvasAlpha.alpha = alpha;
+            float alpha = Mathf.Lerp(0f, 1f, currentTime / duration); //gradually decrease the alpha value from 0 to 1 (aka invisible to visible). rather than it being instant, the current time/duration allows the lerp to be over a set time period duration. 
+            CanvasAlpha.alpha = alpha; //sets the new alpha value for the canvas.
             currentTime += Time.deltaTime;
 
             //Debug.Log("Still running in");

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class GenerateElectrons : MonoBehaviour
 {
-    public Vector3 electronVector;
+  
 
     //change the z to move the electrons slightly
     //REMEMBER INSPECTOR VARIABLES OVERRIDES THESE DEFAULTS SO MAKE SURE TO ADD ELECTRON POSITION IN INSPECTOR
@@ -17,8 +17,8 @@ public class GenerateElectrons : MonoBehaviour
 
     public GameObject Pivot; //sets up a game object to be used as a pivot on the spawner spinning. //these first two are set in the inspector. 
     public GameObject spawnerspinning; //this sets up the spawner spinning object 
-    public GameObject electronstospawn; //this is going to hold how many electrons we will need 
-    public GameObject ringstospawn; //this is how many rings we are going to need 
+    public GameObject electronstospawn; //this is going to hold the electron prefab in order to instantiate it. 
+    public GameObject shellstospawn; //this is how many shells we are going to need 
 
     //these are all gameobjects. 
 
@@ -28,7 +28,7 @@ public class GenerateElectrons : MonoBehaviour
     //NOTE WE CHANGE RADIUS TO 0.01F FROM 0.0995F
 
     [Range(3, 360)] //allows us to change the number of segments in the inspector
-    private int segments = 365; //how many segments the Shell is made up of. the more segments, the smoother/rounder the edge. in general, no need to be so many as 360 but as a circle, has to have a minimum of 3 segments otherwise range wont be set and will default to zero leading to issues. you cant have a shape with only 2 lines allowed. but with 3, you make a triangle, which you could say is just a very low poly circle
+    public int segments = 360; //how many segments the Shell is made up of. the more segments, the smoother/rounder the edge. in general, no need for as many as 360 but as a circle, has to have a minimum of 3 segments otherwise range wont be set and will default to zero leading to issues. you cant have a shape with only 2 lines allowed. but with 3, you make a triangle, which you could say is just a very low poly circle
     public float innerRadius = 0.0095f;  //how far away from the centre of the nucleus the shell start (for higher principle energy levels, increase this).  
     private float thickness = 0.005f; //how wide the Shell will be 
     public Material ShellMat; //allows us to give the shell a texture/material of whatever we want
@@ -105,8 +105,8 @@ public class GenerateElectrons : MonoBehaviour
 
             else if (i == 1) //for rest of the shells, goes through and does the same, generate a ring with a larger radius and spawning the electrons using a wider radius. 
             {
-                createShell(2);
-                createElectrons(element.electronsS2, centre, innerRadius * 2 + (thickness / 2));
+                createShell(2); //passes the shell index in, which acts as the multiplier to the radius of the shell 
+                createElectrons(element.electronsS2, centre, innerRadius * 2 + (thickness / 2)); //passes in the number of electrons contained in that shell, the centre point, the inner radius width multiplied by the shell index, plus the thickness / by two to find the centre of the shell. 
             }
 
 
@@ -278,7 +278,7 @@ public class GenerateElectrons : MonoBehaviour
     public void createShell(int ShellIndex)
 
     {
-        Shell = Instantiate(ringstospawn, spawnerspinning.transform.position, transform.rotation); //sets Shell variable to a new game object. this allows us to know which Shell is associated with what object in the hierarchy - in this case it is the spawner spinning object. 
+        Shell = Instantiate(shellstospawn, spawnerspinning.transform.position, transform.rotation); //sets Shell variable to a new game object. this allows us to know which Shell is associated with what object in the hierarchy - in this case it is the spawner spinning object. 
 
 
         Shell.name = "Shell" + (ShellIndex); //gives a clear name to the Shell - "Ring 1" for example
@@ -296,47 +296,56 @@ public class GenerateElectrons : MonoBehaviour
 
 
         //create the arrays that store our vertices, triangles and uv co-ordinates
-        Vector3[] vertices = new Vector3[(segments + 1) * 2 * 2]; //vector 3 array (holds x,y,z points) equal to a new array which has a size of the number of segemnts we have +1 (as the very starting point of the Shell will also have to double up as the end position - we dont want them to be the same uv co-ordinates). we multiply by two as we need a vertex at the inner radius and outer final thickness and multiple by two again as we need vertices at the top of the Shell and at the bottom of the Shell.
+        Vector3[] vertices = new Vector3[(segments + 1) * 2 * 2]; //vector 3 array (holds x,y,z points) equal to a new array which has a size of the number of segemnts we have +1 (as the very starting point of the Shell will also have to double up as the end position - we dont want them to be the same uv co-ordinates). we multiply by two as we need a vertex at the inner radius and outer final thickness / outer radius and multiple by two again as we need vertices at the top of the Shell and at the bottom of the Shell, so that we can see it from both the top and bottom, preventing back face culling from occuring. 
 
-        int[] triangles = new int[segments * 6 * 2]; //integer array holds triangles -basically every segment is a quad in our mesh. *2 again as top and bottom
+        int[] triangles = new int[segments * 6 * 2]; //integer array holds triangles - every segment is a quad in our mesh. *2 again as top and bottom /// why is this * 6
 
-        Vector2[] uv = new Vector2[(segments + 1) * 2 * 2]; //vector 2 array (U,V). same number of points as the verticies as cause every vertex needs a UV number assigned to it  
+        //a quad is made up of two triangles sharing a common edge and is therefore made up of 6 vertex points. for each segment, we are going to need 6 vertex points, and since we need to render the bottom and top of this 'segment', we need two times the number of vertex points, so that we can have a quad on the bottom and on the top at each segment. 
 
-        int halfway = (segments + 1) * 2; //helper variable - as we are doing the top side and the bottom side, we are doubling the number of vertices we need. vertice 0 is going to be the first vertex of the top side and then halfway through the huge array, the frist vertex of the bottom side. halfway integer is a handy ofset.   
+        Vector2[] uv = new Vector2[(segments + 1) * 2 * 2]; //vector 2 array (U,V). same number of points as the vertices array as every vertex needs a UV number assigned to it  
+
+        int halfway = (segments + 1) * 2; //helper variable - as we are doing the top side and the bottom side, we are doubling the number of vertices we need. vertice 0 is going to be the first vertex of the top side and then again halfway through the huge array, being the frist vertex of the bottom side. halfway integer is a handy ofset.   
 
         for (int i = 0; i < segments + 1; i++) //loop through each segment and create quads. segments plus 1 as we are building out the final edge of vertices. 
         {
-            progress = (float)i / (float)segments; //determine how far we are along orbiting around the spawner
-            angle = Mathf.Deg2Rad * progress * 360; //find the angle we currently are on the circle. Deg2Rad (is a constant number) * progress * 360. progress * 360 is how much progress we have made in degrees converted to radions. 
-            float x = Mathf.Sin(angle); //we can then use this to work out x and z positions of each vertex around the circle by using sin and cos of the circle
-            float z = Mathf.Cos(angle);
+            progress = (float)i / (float)segments; //determine how far we are along orbiting around the spawner . when we first start, i is 0, so 0 / 360 = 0. when we get to the end, it will be 360 / 360 = 1, so progressing through these loops from zero to one, nice represention of where we are around the circle. 
+            angle = Mathf.Deg2Rad * progress * 360; //how much progress we have made and convert to radians //find the angle we currently are on the circle. Deg2Rad (is a constant number) * progress * 360. progress * 360 is how much progress we have made in degrees converted to radions. 
+            float x = Mathf.Sin(angle);  //we can then use this to work out x and z positions of each vertex around the circle by using sin and cos of the angle
+            float z = Mathf.Cos(angle); 
+            //do x and z as y represents the axis to the north to south pole, and we are gonna assume these shells go around the equator. 
 
 
             //with all this info can now start making all of the vertices
 
-            //gets us the top side and the bottom side of the vertices. both of these are equal to a new vector 3 (x and z we calculate, y is just 0 as always 0) multiply that by the inner radius and thickness.  
-            vertices[i * 2] = vertices[i * 2 + halfway] = new Vector3(x, 0f, z) * (innerRadius * ShellIndex + thickness); //this gives us the outside vertices of the Shell 
+            //gets us the top side and the bottom side of the outside vertices. both of these are equal to a new vector3 (x and z we calculate, y is just 0 as always 0) multiply that by the inner radius and thickness.  
+            vertices[i * 2] = vertices[i * 2 + halfway] = new Vector3(x, 0f, z) * (innerRadius * ShellIndex + thickness); //this end section gives us the outside vertices of the Shell 
 
-            vertices[i * 2 + 1] = vertices[i * 2 + 1 + halfway] = new Vector3(x, 0f, z) * innerRadius * ShellIndex; //on the inside we do the same idea. (plus one is so that we get the odd numbers inbetween). this is just the bottom side. 
+            vertices[i * 2 + 1] = vertices[i * 2 + 1 + halfway] = new Vector3(x, 0f, z) * innerRadius * ShellIndex; //on the inside vertices we do the same. (plus one is so that we get the odd numbers inbetween). this is just the bottom side. dont need thickness only inner radius as this is for the inside vertices. 
 
-            uv[i * 2] = uv[i * 2 + halfway] = new Vector2(progress, 0f); //the points go along the width of the texture that we made, ones gonna be at top, one at bottom.moving horizontally as far as we have progressed, but 0f as at the bottom of the texture. 
 
-            uv[i * 2 + 1] = uv[i * 2 + 1 + halfway] = new Vector2(progress, 1f); //for the inner edge of the Shell, reflecting the vertices. now this is all the way to the top (1f)
+            // can now work out our uvs, with the vector2's going along the width of the texture that we created, ones at the top, ones at bottom. 
+
+            //this gives uv values for the top and bottom vertices of the outside of the shell ring
+            uv[i * 2] = uv[i * 2 + halfway] = new Vector2(progress, 0f); //moving horizontally as far as we have progressed, but 0f as it will always be at the bottom of the texture. 
+
+            //this gives uv values for the top and bottom vertices of the inside of the shell ring
+            uv[i * 2 + 1] = uv[i * 2 + 1 + halfway] = new Vector2(progress, 1f); // reflecting the vertices. now this is done all along the top of the texture (1f)
 
 
             //determining the triangles that make up these quads
             if (i != segments) //if not on the final loop, go ahead and make these triangles. 
+            //dont do last loop, as on the last loop we are creating vertices for that last edge, but it doesnt have its own quads associated with it - it just finishes the previous quads. 
 
             //this is all to do with the quads being formed
             {
-                triangles[i * 12] = i * 2; //12 as making 4 sets of triangles (2 quads for the top, 2 for the bottom). every loop is going to be an interation of 12 triangle vertices. i * 2 is how its pulling from the vertices array  
+                triangles[i * 12] = i * 2; //12 as making 4 sets of triangles (2 quads for the top, 2 for the bottom). every loop is going to be an iteration of 12 triangle vertices. i * 2 is how its pulling from the vertices array  
                 triangles[i * 12 + 1] = triangles[i * 12 + 4] = (i + 1) * 2;
                 triangles[i * 12 + 2] = triangles[i * 12 + 3] = i * 2 + 1;
                 triangles[i * 12 + 5] = (i + 1) * 2 + 1;
-                //this is getting the two vertices of the edge we created as well as next to to create these sets of 2 triangles. this does it for the top.
+                //this is getting the two vertices of the edge we created, as well as the next two in order to create these sets of 2 triangle. this does it for the top.
 
                 triangles[i * 12 + 6] = i * 2 + halfway;
-                triangles[i * 12 + 7] = triangles[i * 12 + 10] = i * 2 + 1;
+                triangles[i * 12 + 7] = triangles[i * 12 + 10] = i * 2 + 1; //on flip side so have to reverse the order of these triangles to prevent back face culling. 
                 triangles[i * 12 + 8] = triangles[i * 12 + 9] = (i + 1) * 2 + halfway;
                 triangles[i * 12 + 11] = (i + 1) * 2 + 1 + halfway;
                 //this does the same for the bottom

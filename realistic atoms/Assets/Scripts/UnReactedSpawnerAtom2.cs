@@ -17,10 +17,11 @@ public class UnReactedSpawnerAtom2 : MonoBehaviour
     public int Atom2_PerFrame = 1;
     private int AtomCheckValue = 2; //used when generating the atom so it knows what tag and name to give to the object. 
     public string PopUp;
+    public string PopUp2;
     public float spawn_circle_radius = 300.0f; //use this for random position initial of the atoms, use inside unit circle to find a random position anywhere within a circle
     public float death_circle_radius = 700.0f;
-    public float speed = 20.0f;
-    public string TextEntered;
+    
+  
     bool AboveLimit2;
 
     // Start is called before the first frame update
@@ -124,6 +125,8 @@ public class UnReactedSpawnerAtom2 : MonoBehaviour
         if (AtomNumber > MaxAtomLimit2)
         {
             AboveLimit2 = true;
+            PopUpSystem pop = GameObject.FindGameObjectWithTag("Menu").GetComponent<PopUpSystem>(); //this finds the game object with the pop up system code on it 
+            pop.PopUp(PopUp2);
         }
         else
         {
