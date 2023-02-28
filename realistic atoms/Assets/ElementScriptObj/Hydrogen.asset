@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hydrogen
   m_EditorClassIdentifier: 
   Neutrons: 0
-  Protons: 1
+  Protons: 270
   shells: 1
   electronsS1: 1
   electronsS2: 0
